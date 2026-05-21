@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kogan Store | Premium Portal</title>
+
+<!-- High-End Clean Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #050507;
+  --panel: #07070c;
+  --panel-glass: rgba(7, 7, 12, 0.75);
+  --text: #fdfdfd;
+  --text-muted: #8e8e93;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.15);
+  --input-bg: #121216;
+  --border: #1c1c24;
+  --error: #ef4444;
+}
+
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  
+  /* Synchronized Ambient Moving Monochrome Gradient Background */
+  background: radial-gradient(circle at 10% 20%, #0d0d11 0%, #030305 45%, #08080c 90%);
+  background-size: 200% 200%;
+  animation: ambientMove 16s ease infinite;
+}
+
+@keyframes ambientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Centralized Navigation */
+.nav{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--panel-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+.logo{
+  font-weight: 700;
+  letter-spacing: 6px;
+  font-size: 15px;
+  background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu-btns{
+  display: flex;
+  gap: 8px;
+}
+
+.menu-btns button{
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.menu-btns button:hover{
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* Navigation Drawer */
+.sidebar{
+  position: fixed;
+  top: 0;
+  right: -340px;
+  width: 280px;
+  height: 100%;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  padding: 40px 30px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+  box-sizing: border-box;
+}
+
+.sidebar.active{
+  transform: translateX(-340px);
+}
+
+.sidebar .close-drawer{
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  padding: 0;
+}
+
+.sidebar a{
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 20px 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.sidebar a:hover{
+  color: var(--accent);
+}
+
+/* Elegant Asymmetric Grid (No Boxes) */
+.container {
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 50px;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+@media(max-width: 768px) {
+  .container { grid-template-columns: 1fr; gap: 40px; margin: 30px auto; }
+}
+
+/* Flawless Square Media Frame */
+.image-showcase {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  position: relative;
+  background-color: #0b0b0f;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.image-showcase::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
+  transform: translateX(-100%);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.image-showcase img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-showcase img.loaded {
+  opacity: 1;
+}
+
+/* Luxury Typography & Details */
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin: 0 0 16px 0;
+  line-height: 1.25;
+  background: linear-gradient(135deg, #ffffff 30%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.price-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+}
+
+.price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3b82f6; 
+  margin-left: 4px;
+}
+
+.old {
+  text-decoration: line-through;
+  color: #ef4444; 
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+p#desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0 0 32px 0;
+  font-weight: 300;
+}
+
+/* Minimalist Quantity Controls */
+.section-tag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.qty-wrapper {
+  display: flex;
+  align-items: center;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  width: max-content;
+  margin-bottom: 40px;
+}
+
+.qty-wrapper button {
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.qty-wrapper button:hover { opacity: 0.6; }
+
+#q {
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Signature Order Action Button */
+.btn-prime {
+  width: 100%;
+  padding: 16px;
+  background-color: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.btn-prime:hover {
+  background-color: #e4e4e7;
+  transform: translateY(-1px);
+}
+
+/* Masterpiece Full-Screen Glass Overlay */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 3, 5, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 24px;
+}
+
+.modal-box {
+  width: 100%;
+  max-width: 440px;
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-box h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  letter-spacing: -0.3px;
+}
+
+.modal-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+/* Elegant Form Fields */
+.field {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  margin-bottom: 12px;
+}
+
+.field:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.field.invalid {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+textarea.field {
+  height: 75px;
+  resize: none;
+}
+
+/* High Profile Interactive COD Module */
+.cod-card {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 16px 0 8px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.2s;
+}
+
+.cod-card:hover {
+  border-color: #3b82f6;
+}
+
+.cod-card.selected {
+  border-color: var(--accent);
+  background: rgba(37, 99, 235, 0.04);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.cod-card.invalid {
+  border-color: var(--error) !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.cod-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cod-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.cod-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.radio-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.cod-card.selected .radio-dot {
+  border-color: var(--accent);
+}
+
+.cod-card.selected .radio-dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* System Global Error Notice Label */
+.error-msg {
+  color: var(--error);
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  display: none;
+}
+
+/* Big Profile Processing Screen */
+.status-overlay {
+  display: none;
+  text-align: center;
+}
+
+.secure-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #10b981;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.status-text {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 16px 0 24px 0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION MATRIX -->
+<div class="nav">
+  <div class="logo">KOGAN</div>
+
+  <div class="menu-btns">
+    <button onclick="location.reload()">⟳</button>
+    <button onclick="window.location='index.html'">H</button>
+    <button onclick="toggleMenu()">☰</button>
+  </div>
+</div>
+
+<!-- SIDEBAR SYSTEM DRAWER -->
+<div class="sidebar" id="sidebar">
+  <button class="close-drawer" onclick="toggleMenu()">✕</button>
+ <a href="index.html">Home Page</a>
+   <a href="terms.html">Terms & Conditions</a>
+  <a href="products-list.html">All Products</a>
+
+ <a href="auth.html">Become A Seller And Earn</a>
+ <a href="support.html">Contact Us</a></div>
+
+<!-- CONTAINER IS RUNNING INSTANTLY WITHOUT FORCED STALLERS -->
+<div class="container" id="page">
+
+  <!-- Simple, Flat Square Product Display -->
+  <div class="image-showcase">
+    <img id="img" alt="Product Visual">
+  </div>
+
+  <!-- Perfectly Structured Text Column -->
+  <div>
+    <h1 id="title">Loading Product...</h1>
+
+    <div class="price-row">
+      <span class="price-label">Price:</span>
+      <span class="price" id="price">--</span>
+      <span class="old" id="old"></span>
+    </div>
+
+    <p id="desc">Connecting to metadata node registries...</p>
+
+    <div class="section-tag">Quantity</div>
+    <div class="qty-wrapper">
+      <button type="button" onclick="minus()">−</button>
+      <span id="q">1</span>
+      <button type="button" onclick="plus()">+</button>
+    </div>
+
+    <button class="btn-prime" onclick="openModal()">Purchase</button>
+  </div>
+
+</div>
+
+<!-- INTERACTIVE BLUR MODAL -->
+<div class="modal" id="modal" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+
+    <!-- Elegant Entry Form -->
+    <div id="form">
+      <h2>Shipping Matrix</h2>
+      <div class="modal-sub">All fields and verification methods must be complete.</div>
+      
+      <input class="field" id="name" placeholder="Full Name">
+      <input class="field" id="phone" placeholder="Contact Number">
+      <input class="field" id="email" placeholder="Email Address">
+      <input class="field" id="country" placeholder="Country">
+      <input class="field" id="city" placeholder="City">
+      <textarea class="field" id="address" placeholder="Full Destination Address"></textarea>
+
+      <!-- Custom COD Selection Unit -->
+      <div class="cod-card" id="codBtn" onclick="toggleCod()">
+        <div class="cod-info">
+          <span class="cod-title">Cash On Delivery</span>
+          <span class="cod-sub">Premium home routing (+ $5 COD fee)</span>
+        </div>
+        <div class="radio-dot"></div>
+      </div>
+      
+      <!-- Operational Error Feedback -->
+      <div class="error-msg" id="formError">⚠️ Please complete all shipping credentials and select Cash on Delivery.</div>
+
+      <button class="btn-prime" onclick="order()">Submit Priority Order</button>
+    </div>
+
+    <!-- High Profile System Messages (Instructional/Secure UI) -->
+    <div class="status-overlay" id="success">
+      <div class="secure-badge">● End-to-End Encrypted Route</div>
+      <h2 style="margin-bottom:8px;">Order Routing Initiated</h2>
+      <p class="status-text">
+        Your verification parameters have matched correctly. Our operations squad is currently preparing the distribution manifest. Please preserve your secure logging keys below.
+      </p>
+      <textarea id="receipt" class="field" style="height:90px; font-family:monospace; font-size:12px; background:#08080b; padding:12px; border-color:#22c55e; color:#4ade80;" readonly></textarea>
+      <button class="btn-prime" style="margin-top: 24px; background:#10b981; color:#fff;" onclick="location.reload()">Acknowledge & Exit</button>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+  authDomain: "koganstoree.firebaseapp.com",
+  databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+  projectId: "koganstoree",
+  storageBucket: "koganstoree.firebasestorage.app",
+  messagingSenderId: "166010280262",
+  appId: "1:166010280262:web:a29c6fc7b8251c9997ed47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const dom = {
+  img: document.getElementById("img"),
+  title: document.getElementById("title"),
+  desc: document.getElementById("desc"),
+  price: document.getElementById("price"),
+  old: document.getElementById("old"),
+  qty: document.getElementById("q"),
+  page: document.getElementById("page"),
+  modal: document.getElementById("modal"),
+  form: document.getElementById("form"),
+  success: document.getElementById("success"),
+  receipt: document.getElementById("receipt"),
+  cod: document.getElementById("codBtn"),
+  error: document.getElementById("formError")
+};
+
+const params = new URLSearchParams(location.search);
+const id = params.get("id");
+const refId = params.get("ref");
+
+let qty = 1;
+let product = {};
+let useCod = false;
+
+async function loadProductData() {
+  try {
+    // PASS 1: Instant textual mapping fetch sequence
+    const snap = await get(ref(db, "products/" + id));
+    product = snap.val();
+    
+    if(product) {
+      dom.title.innerText = product.title || 'Untitled Node';
+      dom.desc.innerText = product.description || '';
+      dom.price.innerText = "$" + (product.price || '0.00');
+      dom.old.innerText = product.oldPrice ? "$" + product.oldPrice : "";
+
+      // PASS 2: De-coupled asynchronous image hydration pass
+      setTimeout(() => {
+        if(product.image) {
+          dom.img.src = product.image;
+          dom.img.onload = () => dom.img.classList.add("loaded");
+        }
+      }, 50);
+    } else {
+      dom.title.innerText = "Asset node empty";
+      dom.desc.innerText = "The requested dynamic identifier configuration does not map to a product.";
+    }
+  } catch (err) {
+    console.error(err);
+    dom.title.innerText = "Connection error";
+    dom.desc.innerText = "Failed to synchronize metadata array streams.";
+  }
+}
+
+// Execute fetching stack instantly on runtime paint load
+loadProductData();
+
+window.plus = () => { qty++; dom.qty.innerText = qty; }
+window.minus = () => { if (qty > 1) { qty--; dom.qty.innerText = qty; } }
+window.openModal = () => dom.modal.style.display = "flex";
+
+window.closeModal = () => {
+  dom.modal.style.display = "none";
+  dom.error.style.display = "none";
+  const inputs = ["name", "phone", "email", "country", "city", "address"];
+  inputs.forEach(id => document.getElementById(id).classList.remove("invalid"));
+  dom.cod.classList.remove("invalid");
+}
+
+window.toggleCod = () => {
+  useCod = !useCod;
+  if(useCod) {
+    dom.cod.classList.add("selected");
+    dom.cod.classList.remove("invalid");
+  } else {
+    dom.cod.classList.remove("selected");
+  }
+}
+
+window.toggleMenu = function(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+
+window.order = async () => {
+  dom.error.style.display = "none";
+  let formIsValid = true;
+
+  const textFields = ["name", "phone", "email", "country", "city", "address"];
+  const orderDetails = {};
+
+  textFields.forEach(fieldId => {
+    const element = document.getElementById(fieldId);
+    const value = element.value.trim();
+    if (!value) {
+      element.classList.add("invalid");
+      formIsValid = false;
+    } else {
+      element.classList.remove("invalid");
+      orderDetails[fieldId] = value;
+    }
+  });
+
+  if (!useCod) {
+    dom.cod.classList.add("invalid");
+    formIsValid = false;
+  } else {
+    dom.cod.classList.remove("invalid");
+  }
+
+  if (!formIsValid) {
+    dom.error.style.display = "block";
+    return;
+  }
+
+  const orderId = "ORD-" + Date.now();
+  const shippingAndFees = 3 + 5; 
+  const total = (parseFloat(product.price || 0) * qty) + shippingAndFees;
+
+  const payload = {
+    orderId,
+    productId: id,
+    ...orderDetails,
+    qty,
+    total,
+    ref: refId || null,
+    paymentMethod: "Cash on Delivery",
+    status: "active",
+    time: Date.now()
+  };
+
+  dom.form.style.display = "none";
+  dom.success.style.display = "block";
+  
+  dom.receipt.value = 
+    `--- SECURE TRANSMISSION RECEIPT ---\n` +
+    `TRACKING REF : ${orderId}\n` +
+    `UNITS ROUTED : ${qty} Allocation(s)\n` +
+    `METHOD       : COD (Premium Courier)\n` +
+    `FINAL TOTAL  : $${total.toFixed(2)}\n` +
+    `-----------------------------------`;
+
+  await set(ref(db, "orders/" + orderId), payload);
+}
+</script>
+
+</body>
+</html>

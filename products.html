@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kogan | Products</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+:root{
+    --bg:#030305;
+    --surface:rgba(255,255,255,0.03);
+    --border:rgba(255,255,255,0.08);
+    --gold:#d4af37;
+    --text:#fff;
+    --muted:#8d8d8d;
+    --green:#00d26a;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Plus Jakarta Sans',sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    display:flex;
+}
+
+/* SIDEBAR */
+aside{
+    width:280px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    background:rgba(255,255,255,0.03);
+    border-right:1px solid var(--border);
+    padding:25px;
+}
+
+nav a{
+    display:block;
+    padding:12px;
+    color:var(--muted);
+    text-decoration:none;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+nav a.active, nav a:hover{
+    background:linear-gradient(135deg,var(--gold),#f6d365);
+    color:#000;
+}
+
+/* MAIN */
+main{
+    margin-left:280px;
+    width:100%;
+    padding:30px;
+}
+
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.btn{
+    background:linear-gradient(135deg,var(--gold),#f6d365);
+    padding:12px 18px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:700;
+}
+
+/* ACTIVE LIST */
+.table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.table th,.table td{
+    padding:14px;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    color:var(--muted);
+}
+
+.badge{
+    padding:6px 10px;
+    border-radius:20px;
+    background:rgba(0,210,106,0.15);
+    color:var(--green);
+}
+
+/* MODAL */
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(10px);
+}
+
+.modal-content{
+    width:85%;
+    height:85%;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+    overflow:auto;
+}
+
+.search{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:#fff;
+    margin-bottom:15px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:15px;
+}
+
+.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:15px;
+}
+
+.card img{
+    width:100%;
+    height:140px;
+    object-fit:cover;
+    border-radius:12px;
+}
+
+.card button{
+    margin-top:10px;
+    width:100%;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    background:var(--green);
+    font-weight:700;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<aside>
+<nav>
+<a class="active" href="#">Products</a>
+<a href="analytics.html">Analytics</a>
+<a href="withdraw.html">Withdraw</a>
+</nav>
+</aside>
+
+<main>
+
+<div class="header">
+<h1>Active Products</h1>
+<button class="btn" onclick="openModal()">+ Activate Product</button>
+</div>
+
+<table class="table">
+<thead>
+<tr>
+<th>Product</th>
+<th>Price</th>
+<th>Profit</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="activeList"></tbody>
+</table>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-content">
+
+<h2>Activate Products</h2>
+
+<input class="search" id="search" placeholder="Search products..." oninput="filter()"/>
+
+<div class="grid" id="grid"></div>
+
+</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+authDomain:"koganstoree.firebaseapp.com",
+databaseURL:"https://koganstoree-default-rtdb.firebaseio.com",
+projectId:"koganstoree"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const sellerId = localStorage.getItem("seller_id");
+
+/* NORMALIZE PLAN */
+const normalize = (p)=> (p||"").toLowerCase().replace(" plan","").trim();
+
+/* USER */
+const userSnap = await get(ref(db,"users/"+sellerId));
+const user = userSnap.val();
+const userPlan = normalize(user.plan);
+
+/* PRODUCTS CACHE */
+let allProducts = {};
+let activated = {};
+
+/* LOAD */
+async function load(){
+
+const pSnap = await get(ref(db,"products"));
+allProducts = pSnap.val() || {};
+
+const aSnap = await get(ref(db,"seller_activated_products/"+sellerId));
+activated = aSnap.val() || {};
+
+renderActive();
+}
+
+function renderActive(){
+
+const body = document.getElementById("activeList");
+body.innerHTML = "";
+
+Object.entries(activated).forEach(([id,p])=>{
+
+body.innerHTML += `
+<tr>
+<td>${p.title}</td>
+<td>$${p.price}</td>
+<td>$${p.profit}</td>
+<td><span class="badge">Active</span></td>
+</tr>`;
+});
+}
+
+/* OPEN MODAL */
+window.openModal = function(){
+document.getElementById("modal").style.display="flex";
+renderModal();
+}
+
+window.onclick = e=>{
+if(e.target.id==="modal"){
+document.getElementById("modal").style.display="none";
+}
+}
+
+/* FIXED FILTER LOGIC */
+function renderModal(){
+
+const grid = document.getElementById("grid");
+grid.innerHTML = "";
+
+Object.entries(allProducts).forEach(([id,p])=>{
+
+if(activated[id]) return;
+
+if(!p.channels) return;
+
+/* FIX: PLAN MATCHING */
+const allowed = p.channels.some(c=>{
+const ch = normalize(c);
+if(ch==="website") return true;
+return ch===userPlan;
+});
+
+if(!allowed) return;
+
+const profit = (p.price * 0.1).toFixed(2);
+
+grid.innerHTML += `
+<div class="card">
+<img src="${p.image}">
+<h3>${p.title}</h3>
+<p>$${p.price}</p>
+
+<button onclick="activate('${id}')">
+Activate
+</button>
+</div>`;
+});
+
+}
+
+/* SEARCH */
+window.filter = function(){
+const val = document.getElementById("search").value.toLowerCase();
+document.querySelectorAll(".card").forEach(c=>{
+c.style.display = c.innerText.toLowerCase().includes(val) ? "block":"none";
+});
+}
+
+/* ACTIVATE */
+window.activate = async function(id){
+
+const p = allProducts[id];
+
+await set(ref(db,"seller_activated_products/"+sellerId+"/"+id),{
+title:p.title,
+price:p.price,
+profit:p.price*0.1,
+activatedAt:Date.now()
+});
+
+alert("Activated Successfully");
+
+document.getElementById("modal").style.display="none";
+load();
+}
+
+load();
+
+</script>
+
+</body>
+</html>

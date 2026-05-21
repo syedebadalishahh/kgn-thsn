@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kogan | Concierge Support</title>
+
+<!-- High-End Clean Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #030305;
+  --panel: #07070c;
+  --panel-glass: rgba(7, 7, 12, 0.65);
+  --text: #fdfdfd;
+  --text-muted: #8e8e93;
+  --border: rgba(212, 163, 89, 0.1);
+  --border-focus: rgba(212, 163, 89, 0.3);
+  --gold: #d4a359;
+  --gold-glow: rgba(212, 163, 89, 0.15);
+  --gold-gradient: linear-gradient(135deg, #f3e7c4 0%, #d4a359 50%, #a77c37 100%);
+  --chat-user: linear-gradient(135deg, #1e1b18 0%, #2a241b 100%);
+  --chat-admin: rgba(255, 255, 255, 0.03);
+}
+
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  background: radial-gradient(circle at 10% 20%, #0d0d11 0%, #030305 45%, #0f0d0a 90%);
+  background-size: 200% 200%;
+  animation: ambientMove 16s ease infinite;
+}
+
+@keyframes ambientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+}
+
+.logo {
+  font-weight: 700;
+  letter-spacing: 6px;
+  font-size: 15px;
+  background: linear-gradient(135deg, #ffffff 40%, #d4a359 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.menu-btns button {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.menu-btns button:hover {
+  border-color: var(--gold);
+  background: var(--gold-glow);
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -340px;
+  width: 280px;
+  height: 100%;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  padding: 40px 30px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+  box-sizing: border-box;
+}
+
+.sidebar.active { transform: translateX(-340px); }
+
+.sidebar .close-drawer {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  padding: 0;
+}
+
+.sidebar a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 20px 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.sidebar a:hover { color: var(--gold); }
+
+.identity-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 3, 5, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.identity-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  box-sizing: border-box;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+}
+
+.identity-card h2 {
+  font-size: 20px;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.identity-card p {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+}
+
+.master-viewport {
+  max-width: 1200px;
+  height: calc(100vh - 77px);
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  gap: 20px;
+}
+
+.chat-container {
+  flex: 1;
+  background: rgba(7, 7, 12, 0.45);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.chat-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(7, 7, 12, 0.3);
+}
+
+.identity-cluster {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-dot-frame {
+  position: relative;
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.active-user-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.concierge-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.chat-stream-area {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scroll-behavior: smooth;
+}
+
+.chat-stream-area::-webkit-scrollbar { width: 5px; }
+.chat-stream-area::-webkit-scrollbar-track { background: transparent; }
+.chat-stream-area::-webkit-scrollbar-thumb { background: rgba(212, 163, 89, 0.15); border-radius: 10px; }
+
+.bubble-row {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 75%;
+}
+
+.bubble-row.user-node {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.bubble-row.admin-node {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.msg-bubble {
+  padding: 12px 18px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  border-radius: 12px;
+  font-weight: 300;
+  word-break: break-word;
+}
+
+.user-node .msg-bubble {
+  background: var(--chat-user);
+  border: 1px solid var(--border);
+  color: #fdfdfd;
+  border-bottom-right-radius: 2px;
+  box-shadow: inset 0 0 15px rgba(212, 163, 89, 0.03);
+}
+
+.admin-node .msg-bubble {
+  background: var(--chat-admin);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  color: #e4e4e7;
+  border-bottom-left-radius: 2px;
+}
+
+.msg-timestamp {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  letter-spacing: 0.5px;
+}
+
+.chat-input-dock {
+  padding: 18px 24px;
+  border-top: 1px solid var(--border);
+  background: rgba(4, 4, 6, 0.6);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.input-field-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.field {
+  width: 100%;
+  padding: 14px 16px;
+  background: #0d0d12;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13.5px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+}
+
+.field:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 15px var(--gold-glow);
+}
+
+.btn-action {
+  padding: 0 24px;
+  height: 45px;
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.btn-action:hover {
+  background-color: var(--gold);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.typing-beacon {
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.typing-dots {
+  display: flex;
+  gap: 3px;
+}
+
+.typing-dots span {
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1.0); }
+}
+
+@media(max-width: 768px) {
+  .nav { padding: 16px; }
+  .master-viewport { height: calc(100vh - 69px); padding: 10px; }
+  .chat-stream-area { padding: 16px; }
+  .chat-input-dock { padding: 12px; gap: 8px; }
+  .btn-action { padding: 0 16px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="identity-overlay" id="identityOverlay" style="display: none;">
+  <div class="identity-card">
+    <h2>Secure Identification</h2>
+    <p>Please supply your routing coordinates to establish an active synchronization pipeline with the live response matrix.</p>
+    <input class="field" id="setupName" placeholder="Full Name" style="margin-bottom: 12px;">
+    <input class="field" id="setupEmail" placeholder="Email Address" style="margin-bottom: 20px;">
+    <button class="btn-action" style="width: 100%;" onclick="initializeIdentity()">Establish Connection</button>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="logo">KOGAN</div>
+  <div class="menu-btns">
+       <button onclick="toggleMenu()">☰</button>
+  </div>
+</div>
+
+<div class="sidebar" id="sidebar">
+  <button class="close-drawer" onclick="toggleMenu()">✕</button>
+     <a href="index.html">Home Page</a>
+    
+ 
+  <a href="products-list.html">All Products</a>
+   <a href="terms.html">Terms & Conditions</a>
+ <a href="auth.html">Become A Seller And Earn</a>
+   
+</div>
+
+<div class="master-viewport">
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="identity-cluster">
+        <div class="status-dot-frame"></div>
+        <div>
+          <div class="active-user-title" id="displayedUserName">Synchronizing...</div>
+          <div class="concierge-sub">Operational Helpdesk System Support</div>
+        </div>
+      </div>
+      <div class="typing-beacon" id="typingBeacon">
+        <span>Admin is writing</span>
+        <div class="typing-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <div class="chat-stream-area" id="chatStream"></div>
+
+    <div class="chat-input-dock">
+      <div class="input-field-wrapper">
+        <input class="field" id="msgInput" placeholder="Write operational transmission requests..." onkeydown="if(event.key === 'Enter') sendPayloadMessage()">
+      </div>
+      <button class="btn-action" id="sendBtn" onclick="sendPayloadMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+  authDomain: "koganstoree.firebaseapp.com",
+  databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+  projectId: "koganstoree",
+  storageBucket: "koganstoree.firebasestorage.app",
+  messagingSenderId: "166010280262",
+  appId: "1:166010280262:web:a29c6fc7b8251c9997ed47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+let currentUser = JSON.parse(localStorage.getItem("kogan_support_uid"));
+
+window.toggleMenu = function(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+
+function checkUserVerificationState() {
+  if(!currentUser) {
+    document.getElementById("identityOverlay").style.display = "flex";
+  } else {
+    document.getElementById("identityOverlay").style.display = "none";
+    establishLiveDatabaseSubscription();
+  }
+}
+
+window.initializeIdentity = function() {
+  const nameVal = document.getElementById("setupName").value.trim();
+  const emailVal = document.getElementById("setupEmail").value.trim();
+  
+  if(!nameVal || !emailVal) {
+    alert("Identification metrics invalid. Please fulfill credentials accurately.");
+    return;
+  }
+  
+  const structuredId = emailVal.replace(/[^a-zA-Z0-9]/g, "_").toLowerCase();
+  
+  currentUser = {
+    uid: structuredId,
+    name: nameVal,
+    email: emailVal
+  };
+  
+  localStorage.setItem("kogan_support_uid", JSON.stringify(currentUser));
+  document.getElementById("identityOverlay").style.display = "none";
+  establishLiveDatabaseSubscription();
+}
+
+function establishLiveDatabaseSubscription() {
+  document.getElementById("displayedUserName").innerText = currentUser.name;
+  
+  const chatMetaRef = ref(db, `support_chats/${currentUser.uid}`);
+  const messagesQueryRef = ref(db, `support_chats/${currentUser.uid}/messages`);
+  
+  // Set initial parent meta fields safely only if they do not exist
+  onValue(chatMetaRef, (snapshot) => {
+    const data = snapshot.val();
+    if(!data) {
+      update(ref(db, `support_chats/${currentUser.uid}`), {
+        name: currentUser.name,
+        email: currentUser.email,
+        lastMessage: "Channel opened.",
+        lastUpdated: Date.now()
+      });
+    }
+    
+    if(data && data.typingState === "admin") {
+      document.getElementById("typingBeacon").style.display = "flex";
+    } else {
+      document.getElementById("typingBeacon").style.display = "none";
+    }
+  }, { onlyOnce: true }); // Checked once to prevent background stream interruptions
+
+  // Listen to typing states accurately over time
+  onValue(ref(db, `support_chats/${currentUser.uid}/typingState`), (snapshot) => {
+    if(snapshot.val() === "admin") {
+      document.getElementById("typingBeacon").style.display = "flex";
+    } else {
+      document.getElementById("typingBeacon").style.display = "none";
+    }
+  });
+
+  // Streaming real-time messaging layout rendering
+  onValue(messagesQueryRef, (snapshot) => {
+    const streamContainer = document.getElementById("chatStream");
+    streamContainer.innerHTML = "";
+    
+    const packetData = snapshot.val();
+    if(packetData) {
+      Object.keys(packetData).forEach(msgKey => {
+        const item = packetData[msgKey];
+        const isUser = item.sender === "user";
+        
+        const rowNode = document.createElement("div");
+        rowNode.className = `bubble-row ${isUser ? 'user-node' : 'admin-node'}`;
+        
+        const timestampFormatted = new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        rowNode.innerHTML = `
+          <div class="msg-bubble">${escapeHtml(item.text)}</div>
+          <div class="msg-timestamp">${timestampFormatted}</div>
+        `;
+        streamContainer.appendChild(rowNode);
+      });
+      
+      streamContainer.scrollTop = streamContainer.scrollHeight;
+    } else {
+      streamContainer.innerHTML = `
+        <div style="text-align: center; color: var(--text-muted); font-size: 13px; margin-top: 40px; font-weight: 300;">
+          System secure corridor linked. Outline your design adjustments or operational complaints above to communicate.
+        </div>
+      `;
+    }
+  });
+}
+
+window.sendPayloadMessage = async function() {
+  const inputEl = document.getElementById("msgInput");
+  const sendBtnEl = document.getElementById("sendBtn");
+  const payloadText = inputEl.value.trim();
+  
+  if(!payloadText) return;
+  
+  inputEl.disabled = true;
+  sendBtnEl.disabled = true;
+  sendBtnEl.innerText = "...";
+  
+  try {
+    const targetMsgCollectionRef = ref(db, `support_chats/${currentUser.uid}/messages`);
+    const trackingRootRef = ref(db, `support_chats/${currentUser.uid}`);
+    
+    const messagePayload = {
+      sender: "user",
+      text: payloadText,
+      timestamp: Date.now()
+    };
+    
+    // 1. Push new unique message into message list nodes securely
+    await push(targetMsgCollectionRef, messagePayload);
+    
+    // 2. Use update() instead of set() so child arrays are never overwritten!
+    await update(trackingRootRef, {
+      lastMessage: payloadText,
+      lastUpdated: Date.now(),
+      typingState: "none"
+    });
+    
+    inputEl.value = "";
+  } catch(ex) {
+    console.error("Transmission fault tracking metrics flag:", ex);
+    alert("Connection sync issue encountered during payload transfer layout execution layers.");
+  } finally {
+    inputEl.disabled = false;
+    sendBtnEl.disabled = false;
+    sendBtnEl.innerText = "Send";
+    inputEl.focus();
+  }
+}
+
+function escapeHtml(stringSource) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return String(stringSource).replace(/[&<>"']/g, (m) => map[m]);
+}
+
+checkUserVerificationState();
+</script>
+
+</body>
+</html>

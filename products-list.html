@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kogan | Premium Asset Inventory</title>
+
+<!-- High-End Clean Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg: #030305;
+  --panel: #07070c;
+  --panel-glass: rgba(7, 7, 12, 0.75);
+  --text: #ffffff;
+  --muted: #64748b;
+  --border: #14141f;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.15);
+}
+
+body{
+  margin:0;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  
+  /* Synchronized Ambient Moving Monochrome Gradient Background */
+  background: radial-gradient(circle at 10% 20%, #0d0d11 0%, #030305 45%, #08080c 90%);
+  background-size: 200% 200%;
+  animation: ambientMove 16s ease infinite;
+}
+
+@keyframes ambientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Centralized Navigation */
+.nav{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--panel-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+.logo{
+  font-weight: 700;
+  letter-spacing: 6px;
+  font-size: 15px;
+  background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu-btns{
+  display: flex;
+  gap: 8px;
+}
+
+.menu-btns button{
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.menu-btns button:hover{
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* Navigation Drawer */
+.sidebar{
+  position: fixed;
+  top: 0;
+  right: -340px;
+  width: 280px;
+  height: 100%;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  padding: 40px 30px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+  box-sizing: border-box;
+}
+
+.sidebar.active{
+  transform: translateX(-340px);
+}
+
+.sidebar .close-drawer{
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  padding: 0;
+}
+
+.sidebar a{
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 20px 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.sidebar a:hover{
+  color: var(--accent);
+}
+
+/* Master Control Module (Search & Sort Filters) */
+.control-hub {
+  max-width: 500px;
+  margin: 60px auto 40px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.control-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.search-wrapper {
+  width: 100%;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.search-wrapper input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.filter-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.filter-actions select {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  text-align-last: center;
+  transition: all 0.2s;
+}
+
+.filter-actions select:hover, .filter-actions select:focus {
+  border-color: var(--accent);
+}
+
+/* Stream Status Monitor */
+.stream-monitor {
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+/* Premium VIP 2-Column Matrix Frame */
+.grid-frame {
+  max-width: 500px;
+  margin: 0 auto 100px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* VIP Compact Cards with Centered Details */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px var(--accent-glow);
+}
+
+.card-img-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #020204;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Smooth background loading placeholder inside the canvas frame */
+.card-img-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
+  transform: translateX(-100%);
+  animation: pulse 1.5s infinite;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.4s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.card img.loaded {
+  opacity: 1;
+}
+
+.card:hover img.loaded {
+  transform: scale(1.02);
+}
+
+.card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: center; /* Perfectly centers all details */
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #e2e8f0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  width: 100%;
+}
+
+.price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3b82f6;
+  width: 100%;
+}
+
+@keyframes pulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Mobile Alignment Balancing */
+@media (max-width: 600px) {
+  .nav { padding: 20px 16px; }
+  .control-hub { margin-top: 40px; }
+  .grid { gap: 12px; }
+  .card-body { padding: 10px; }
+  .title { font-size: 11px; }
+  .price { font-size: 12px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION MATRIX -->
+<div class="nav">
+  <div class="logo">KOGAN</div>
+
+  <div class="menu-btns">
+        <button onclick="toggleMenu()">☰</button>
+  </div>
+</div>
+
+<!-- SIDEBAR SYSTEM DRAWER -->
+<div class="sidebar" id="sidebar">
+  <button class="close-drawer" onclick="toggleMenu()">✕</button>
+  <a href="index.html">Home Page</a>
+    
+  
+    <a href="terms.html">Terms & Conditions</a>
+  <a href="auth.html">Become A Seller And Earn</a>
+
+</div>
+
+<!-- REGISTRY MASTER CONTROLLER -->
+<div class="control-hub">
+  <div class="control-layout">
+    <div class="search-wrapper">
+      <input type="text" id="search" placeholder="Search Products..." oninput="handleFilterAndSearch()">
+    </div>
+    <div class="filter-actions">
+      <select id="sortPrice" onchange="handleFilterAndSearch()">
+        <option value="all">Sort: Chronological</option>
+        <option value="low">Price: Low to High</option>
+        <option value="high">Price: High to Low</option>
+      </select>
+      <select id="filterRange" onchange="handleFilterAndSearch()">
+        <option value="all">Filter: All Rates</option>
+        <option value="under50">Under $50</option>
+        <option value="above50">$50 to $200</option>
+        <option value="premium">Premium Over $200</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- REAL-TIME BACKGROUND STREAM TRACKER -->
+<div class="stream-monitor" id="streamMonitor">Welcome To The Kogan Store</div>
+
+<!-- COMPACT STREAM GRID FRAME -->
+<div class="grid-frame">
+  <div class="grid" id="grid">
+    <!-- Items dynamically mount here -->
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+  authDomain: "koganstoree.firebaseapp.com",
+  databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+  projectId: "koganstoree",
+  storageBucket: "koganstoree.firebasestorage.app",
+  messagingSenderId: "166010280262",
+  appId: "1:166010280262:web:a29c6fc7b8251c9997ed47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const grid = document.getElementById("grid");
+const streamMonitor = document.getElementById("streamMonitor");
+
+let masterMemoryPool = []; // Stores complete inventory architecture
+let renderedVisibleList = []; // Track currently processed visible elements
+let totalItemsCount = 0;
+let pointerIndex = 0;
+const batchStepSize = 30;
+let streamingInterval = null;
+
+async function bootDatabasePipeline(){
+  try {
+    const snap = await get(ref(db, "products"));
+    if(snap.exists()){
+      const rawData = snap.val();
+      
+      // Structure registry nodes into manageable system arrays
+      masterMemoryPool = Object.keys(rawData).map(key => ({
+        id: key,
+        title: rawData[key].title || 'Untitled Node',
+        price: parseFloat(rawData[key].price) || 0.00,
+        image: rawData[key].image || ''
+      })).reverse(); // Keeping fresh items grouped first
+
+      totalItemsCount = masterMemoryPool.length;
+      renderedVisibleList = [...masterMemoryPool];
+      
+      // Execute the instant Pass 1 stream sequence immediately
+      streamNextBatch();
+      
+      // Arm the 1-second interval loop processing machine
+      streamingInterval = setInterval(() => {
+        if (pointerIndex >= renderedVisibleList.length) {
+          clearInterval(streamingInterval);
+                 } else {
+          streamNextBatch();
+        }
+      }, 1000);
+
+    } else {
+      streamMonitor.innerText = "System register blank.";
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:12px;padding:40px 0;">No objects recorded in master cloud cluster.</div>`;
+    }
+  } catch(err) {
+    console.error(err);
+    streamMonitor.innerText = "Pipeline error occurred.";
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#ef4444;font-size:12px;padding:40px 0;">Cluster connection denied. Check console routing layers.</div>`;
+  }
+}
+
+// PASS 1: Fast Element Mapping & Structural Appending
+function streamNextBatch(){
+  const endpoint = Math.min(pointerIndex + batchStepSize, renderedVisibleList.length);
+  const currentBatchSlice = renderedVisibleList.slice(pointerIndex, endpoint);
+
+  if (currentBatchSlice.length === 0 && pointerIndex === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--muted);font-size:12px;padding:40px 0;">Zero indexes matched search attributes.</div>`;
+    streamMonitor.innerText = "Index sorting match: 0 items";
+    return;
+  }
+
+  
+  currentBatchSlice.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.id = `node-${p.id}`;
+    card.onclick = () => location.href = "product.html?id=" + p.id;
+
+    // Notice that the img src is deliberately empty here to maximize instant paint tracking loops
+    card.innerHTML = `
+      <div class="card-img-frame">
+        <img id="img-${p.id}" alt="${p.title}" />
+      </div>
+      <div class="card-body">
+        <div class="title">${p.title}</div>
+        <div class="price">$${p.price.toFixed(2)}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // PASS 2: Asynchronous Background Asset Hydration
+  setTimeout(() => {
+    currentBatchSlice.forEach(p => {
+      const imgNode = document.getElementById(`img-${p.id}`);
+      if(imgNode) {
+        imgNode.src = p.image || 'https://via.placeholder.com/300';
+        imgNode.onload = () => imgNode.classList.add('loaded');
+      }
+    });
+  }, 50);
+
+  pointerIndex = endpoint;
+}
+
+// Master search and sorting system handling
+window.handleFilterAndSearch = function(){
+  // Clear running loops to prevent system cross-talk override matches
+  if(streamingInterval) clearInterval(streamingInterval);
+  grid.innerHTML = "";
+  pointerIndex = 0;
+
+  const searchVal = document.getElementById("search").value.toLowerCase();
+  const priceSort = document.getElementById("sortPrice").value;
+  const rangeFilter = document.getElementById("filterRange").value;
+
+  // 1. Process filtering arrays
+  let trackingArray = masterMemoryPool.filter(p => {
+    const matchSearch = p.title.toLowerCase().includes(searchVal);
+    let matchRange = true;
+
+    if (rangeFilter === "under50") matchRange = p.price < 50;
+    else if (rangeFilter === "above50") matchRange = p.price >= 50 && p.price <= 200;
+    else if (rangeFilter === "premium") matchRange = p.price > 200;
+
+    return matchSearch && matchRange;
+  });
+
+  // 2. Process sorting metrics
+  if (priceSort === "low") {
+    trackingArray.sort((a, b) => a.price - b.price);
+  } else if (priceSort === "high") {
+    trackingArray.sort((a, b) => b.price - a.price);
+  }
+
+  renderedVisibleList = trackingArray;
+
+  // Run initial pass stream sequence on newly filtered index array
+  streamNextBatch();
+
+  // Re-engage loop machinery if subsequent records survive match arrays
+  streamingInterval = setInterval(() => {
+    if (pointerIndex >= renderedVisibleList.length) {
+      clearInterval(streamingInterval);
+      streamMonitor.innerText = `Shop Freely`;
+    } else {
+      streamNextBatch();
+    }
+  }, 1000);
+}
+
+window.toggleMenu = function(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+
+// Initialize performance engine execution array instantly
+bootDatabasePipeline();
+</script>
+
+</body>
+</html>

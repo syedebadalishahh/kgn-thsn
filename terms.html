@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kogan | Terms & Conditions</title>
+
+<!-- High-End Clean Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg: #030305;
+  --panel: #07070c;
+  --panel-glass: rgba(7, 7, 12, 0.75);
+  --text: #ffffff;
+  --muted: #64748b;
+  --border: #14141f;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.15);
+}
+
+body{
+  margin:0;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  
+  /* Synchronized Ambient Moving Monochrome Gradient Background */
+  background: radial-gradient(circle at 10% 20%, #0d0d11 0%, #030305 45%, #08080c 90%);
+  background-size: 200% 200%;
+  animation: ambientMove 16s ease infinite;
+}
+
+@keyframes ambientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Centralized Navigation */
+.nav{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--panel-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+.logo{
+  font-weight: 700;
+  letter-spacing: 6px;
+  font-size: 15px;
+  background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu-btns{
+  display: flex;
+  gap: 8px;
+}
+
+.menu-btns button{
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.menu-btns button:hover{
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* Navigation Drawer */
+.sidebar{
+  position: fixed;
+  top: 0;
+  right: -340px;
+  width: 280px;
+  height: 100%;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  padding: 40px 30px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+  box-sizing: border-box;
+}
+
+.sidebar.active{
+  transform: translateX(-340px);
+}
+
+.sidebar .close-drawer{
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  padding: 0;
+}
+
+.sidebar a{
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 20px 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.sidebar a:hover{
+  color: var(--accent);
+}
+
+/* Legal Frame & Layout */
+.legal-section {
+  max-width: 650px;
+  margin: 80px auto 100px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.legal-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.legal-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin: 0 0 16px 0;
+  background: linear-gradient(135deg, #ffffff 20%, #a1a1aa 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.legal-header p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* Document Node Blocks */
+.legal-matrix {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.terms-node {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 24px;
+  transition: all 0.25s ease;
+}
+
+.terms-node:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.terms-node h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f4f4f5;
+  margin: 0 0 10px 0;
+  letter-spacing: 0.5px;
+  display: flex;
+  gap: 12px;
+}
+
+.terms-node h2 span {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+.terms-node p {
+  color: #a1a1aa;
+  font-size: 13.5px;
+  line-height: 1.7;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Footer Operational Signature */
+.legal-footer {
+  text-align: center;
+  margin-top: 60px;
+  padding-top: 30px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 600px) {
+  .nav { padding: 20px 16px; }
+  .legal-section { margin-top: 50px; }
+  .legal-header h1 { font-size: 26px; }
+  .terms-node { padding: 20px; }
+  .terms-node h2 { font-size: 14px; }
+  .terms-node p { font-size: 12.5px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION MATRIX -->
+<div class="nav">
+  <div class="logo">KOGAN</div>
+
+  <div class="menu-btns">
+    <button onclick="location.reload()">⟳</button>
+    <button onclick="window.location='index.html'">H</button>
+    <button onclick="toggleMenu()">☰</button>
+  </div>
+</div>
+
+<!-- SIDEBAR SYSTEM DRAWER -->
+<div class="sidebar" id="sidebar">
+  <button class="close-drawer" onclick="toggleMenu()">✕</button>
+  <a href="index.html">Home Page</a>
+   <a href="products-list.html">All Products</a>
+ <a href="auth.html">Become A Seller And Earn</a>
+ <a href="support.html">Contact Us</a></div>
+
+<!-- MASTER LEGAL CONTAINER -->
+<div class="legal-section">
+  
+  <div class="legal-header">
+    <h1>Terms And Conditions</h1>
+    <p>Welcome to Kogan Store. By accessing or using our website, you agree to follow the terms and conditions mentioned below. If you do not agree, please do not use our services.</p>
+  </div>
+
+  <div class="legal-matrix">
+    
+    <!-- NODE 1 -->
+    <div class="terms-node">
+      <h2><span>01.</span> Use Of Website</h2>
+      <p>You must use this website only for lawful purposes. Any misuse, fraud, or unauthorized activity is strictly prohibited.</p>
+    </div>
+
+    <!-- NODE 2 -->
+    <div class="terms-node">
+      <h2><span>02.</span> Products And Pricing</h2>
+      <p>We strive to keep all product information and prices accurate. However, we reserve the right to change prices, descriptions, or availability at any time without prior notice.</p>
+    </div>
+
+    <!-- NODE 3 -->
+    <div class="terms-node">
+      <h2><span>03.</span> Orders And Payments</h2>
+      <p>All orders are subject to acceptance and availability. We reserve the right to cancel or refuse any order at our discretion. Payments must be completed through approved payment methods.</p>
+    </div>
+
+    <!-- NODE 4 -->
+    <div class="terms-node">
+      <h2><span>04.</span> Shipping And Delivery</h2>
+      <p>Delivery times may vary based on location and product availability. We are not responsible for delays caused by courier services or external factors.</p>
+    </div>
+
+    <!-- NODE 5 -->
+    <div class="terms-node">
+      <h2><span>05.</span> Returns And Refunds</h2>
+      <p>Returns and refunds are only applicable according to our return policy. Products must be returned in original condition within the allowed time frame.</p>
+    </div>
+
+    <!-- NODE 6 -->
+    <div class="terms-node">
+      <h2><span>06.</span> User Accounts</h2>
+      <p>You are responsible for maintaining the confidentiality of your account information. Any activity under your account is your responsibility.</p>
+    </div>
+
+    <!-- NODE 7 -->
+    <div class="terms-node">
+      <h2><span>07.</span> Intellectual Property</h2>
+      <p>All content on this website, including logos, images, and text, belongs to Kogan Store and cannot be used without permission.</p>
+    </div>
+
+    <!-- NODE 8 -->
+    <div class="terms-node">
+      <h2><span>08.</span> Limitation Of Liability</h2>
+      <p>Kogan Store is not responsible for any direct or indirect damages resulting from the use of our website or services.</p>
+    </div>
+
+    <!-- NODE 9 -->
+    <div class="terms-node">
+      <h2><span>09.</span> Changes To Terms</h2>
+      <p>We may update these terms at any time. Continued use of the website means you accept the updated terms.</p>
+    </div>
+
+    <!-- NODE 10 -->
+    <div class="terms-node">
+      <h2><span>10.</span> Contact Us</h2>
+      <p>For any questions regarding these terms, please contact our support team.</p>
+    </div>
+
+  </div>
+
+  <div class="legal-footer">
+    © 2026 KOGAN ARCHIVE. ALL RIGHTS RESERVED.
+  </div>
+
+</div>
+
+<script>
+window.toggleMenu = function(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+</script>
+
+</body>
+</html>

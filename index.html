@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kogan | Elite Collection Registry</title>
+
+<!-- High-End Clean Typography -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg: #030305;
+  --panel: #07070c;
+  --panel-glass: rgba(7, 7, 12, 0.75);
+  --text: #ffffff;
+  --muted: #64748b;
+  --border: #14141f;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.15);
+}
+
+body{
+  margin:0;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  
+  /* High-Profile Moving Monochrome Gradient Background */
+  background: radial-gradient(circle at 10% 20%, #0d0d11 0%, #030305 45%, #08080c 90%);
+  background-size: 200% 200%;
+  animation: ambientMove 16s ease infinite;
+}
+
+@keyframes ambientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Centralized Navigation */
+.nav{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--panel-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+.logo{
+  font-weight: 700;
+  letter-spacing: 6px;
+  font-size: 15px;
+  background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.menu-btns{
+  display: flex;
+  gap: 8px;
+}
+
+.menu-btns button{
+  background: transparent;
+  border: 1px solid var(--border);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.menu-btns button:hover{
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* Navigation Drawer */
+.sidebar{
+  position: fixed;
+  top: 0;
+  right: -340px;
+  width: 280px;
+  height: 100%;
+  background: var(--panel);
+  border-left: 1px solid var(--border);
+  padding: 40px 30px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 999;
+  box-sizing: border-box;
+}
+
+.sidebar.active{
+  transform: translateX(-340px);
+}
+
+.sidebar .close-drawer{
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+  margin-bottom: 30px;
+  padding: 0;
+}
+
+.sidebar a{
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 20px 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.sidebar a:hover{
+  color: var(--accent);
+}
+
+/* High-Profile Dedicated Editorial Section */
+.editorial-section {
+  max-width: 900px;
+  margin: 90px auto 60px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.editorial-container {
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.editorial-container h1 {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  margin: 0 0 24px 0;
+  line-height: 1.15;
+  background: linear-gradient(135deg, #ffffff 20%, #a1a1aa 60%, #3f3f46 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.editorial-container p {
+  color: var(--muted);
+  font-size: 14.5px;
+  line-height: 1.8;
+  margin: 0 0 20px 0;
+  font-weight: 300;
+  text-align: center;
+}
+
+.editorial-container p.bold-lead {
+  color: #e4e4e7;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+/* Integrated Central Filter Module */
+.filter-hub {
+  max-width: 500px;
+  margin: 0 auto 50px auto;
+  padding: 0 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.filter-hub h2 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fff;
+  margin: 0 0 16px 0;
+}
+
+.search-container {
+  width: 100%;
+}
+
+.search-container input{
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+.search-container input:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+/* Premium Balanced Asynchronous Stream Grid */
+.grid-frame {
+  max-width: 500px;
+  margin: 0 auto 100px auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Forces exactly 2 products per row on all devices */
+.grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Non-Blocking Skeleton Placeholders */
+.skeleton-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  aspect-ratio: 1 / 1.35;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.02), transparent);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* High-End Symmetrical Micro Assets */
+.card{
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover{
+  border-color: var(--accent);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5), 0 0 15px var(--accent-glow);
+}
+
+.card-img-frame {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #020204;
+  overflow: hidden;
+}
+
+.card img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.card:hover img {
+  transform: scale(1.02);
+}
+
+.card-body{
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.title{
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #e2e8f0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.price{
+  font-size: 13px;
+  font-weight: 700;
+  color: #3b82f6;
+}
+
+/* Strict Responsiveness Overrides */
+@media (max-width: 600px) {
+  .nav { padding: 20px 16px; }
+  .editorial-section { margin-top: 60px; margin-bottom: 40px; }
+  .editorial-container h1 { font-size: 30px; }
+  .grid { gap: 12px; }
+  .card-body { padding: 10px; }
+  .title { font-size: 11px; }
+  .price { font-size: 12px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVIGATION MATRIX -->
+<div class="nav">
+  <div class="logo">KOGAN</div>
+
+  <div class="menu-btns">
+      <button onclick="toggleMenu()">☰</button>
+  </div>
+</div>
+
+<!-- SIDEBAR SYSTEM DRAWER -->
+<div class="sidebar" id="sidebar">
+  <button class="close-drawer" onclick="toggleMenu()">✕</button>
+  <a href="products-list.html">All Products</a>
+   <a href="terms.html">Terms & Conditions</a>
+ <a href="auth.html">Become A Seller And Earn</a>
+ <a href="support.html">Contact Us</a>
+ 
+</div>
+
+<!-- CENTRAL SELECTION EDITORIAL SECTION -->
+<div class="editorial-section">
+  <div class="editorial-container">
+    <h1>Complete Modern Online Marketplace</h1>
+    
+    <p class="bold-lead">Kogan Store Is A Modern Online Marketplace Offering Electronics, Phones, Plants, Home Items, And More. It Provides A Fast, Simple, And Reliable Shopping Experience With Quality Products At Affordable Prices.</p>
+     </div>
+</div>
+
+<!-- FILTER HUB CONTROL -->
+<div class="filter-hub">
+  <h2>Our Products</h2>
+  <div class="search-container">
+    <input type="text" id="search" placeholder="Search product registry..." oninput="filterProducts()">
+  </div>
+</div>
+
+<!-- COMPACT STREAM GRID FRAME -->
+<div class="grid-frame">
+  <div class="grid" id="grid">
+    <!-- Non-Blocking Skeletons align instantly inside the 2-column layout -->
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+    <div class="skeleton-card"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+  authDomain: "koganstoree.firebaseapp.com",
+  databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+  projectId: "koganstoree",
+  storageBucket: "koganstoree.firebasestorage.app",
+  messagingSenderId: "166010280262",
+  appId: "1:166010280262:web:a29c6fc7b8251c9997ed47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const grid = document.getElementById("grid");
+let products = [];
+
+async function loadProducts(){
+  try {
+    const snap = await get(ref(db,"products"));
+    
+    if(snap.exists()){
+      const data = snap.val();
+      
+      const allProducts = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+      }));
+
+      // Invert hierarchy sequence to isolate recent items up to max threshold 20
+      products = allProducts.reverse().slice(0, 20);
+      render(products);
+    } else {
+      grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 30px 0; font-size: 12px;">Matrix deployment register is empty.</div>`;
+    }
+  } catch(err) {
+    console.error(err);
+    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #ef4444; padding: 30px 0; font-size: 12px;">Database connection interrupted.</div>`;
+  }
+}
+
+function render(list){
+  grid.innerHTML = "";
+
+  if(list.length === 0) {
+    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--muted); padding: 30px 0; font-size: 12px;">Zero items matching search index.</div>`;
+    return;
+  }
+
+  list.forEach(p=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.onclick = () => location.href = "product.html?id=" + p.id;
+
+    card.innerHTML = `
+      <div class="card-img-frame">
+        <img src="${p.image || 'https://via.placeholder.com/300'}" alt="${p.title || 'Asset Core'}" loading="lazy"/>
+      </div>
+      <div class="card-body">
+        <div class="title">${p.title || 'Untitled Node'}</div>
+        <div class="price">$${p.price || '0.00'}</div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+window.filterProducts = function(){
+  const val = document.getElementById("search").value.toLowerCase();
+  const filtered = products.filter(p =>
+    (p.title || "").toLowerCase().includes(val)
+  );
+  render(filtered);
+}
+
+window.toggleMenu = function(){
+  document.getElementById("sidebar").classList.toggle("active");
+}
+
+// Background script runs instantly to decouple UI framework initialization
+loadProducts();
+</script>
+
+</body>
+</html>
