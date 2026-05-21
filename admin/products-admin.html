@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kogan Store - Product Manager Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060608;
+            --bg-surface: rgba(255, 255, 255, 0.02);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-main: #f3f4f6;
+            --text-muted: #8e929b;
+            --accent-gold: #d4af37;
+            --accent-neon: #00ffcc;
+            --accent-danger: #ff4a5a;
+            --glass-blur: blur(20px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: radial-gradient(circle at 50% 50%, #14121a 0%, #060608 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #sidebar-backcloth {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 900;
+            display: none;
+        }
+
+        /* --- RESPONSIVE SIDEBAR NAVIGATION MATRIX --- */
+        aside {
+            background: rgba(10, 10, 14, 0.85);
+            border-right: 1px solid var(--border-subtle);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            z-index: 999;
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        aside.mobile-open { left: 0; }
+
+        .brand-zone { display: flex; align-items: center; justify-content: space-between; padding-left: 10px; }
+        .brand-title { display: flex; align-items: center; gap: 12px; }
+        .brand-zone .logo-icon { color: var(--accent-gold); font-size: 22px; }
+        .brand-zone h1 { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        .close-sidebar-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; display: none; }
+
+        nav { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; overflow-y: auto; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .nav-item i { font-size: 16px; width: 20px; }
+        .nav-item:hover, .nav-item.active { color: #fff; background: rgba(255, 255, 255, 0.03); }
+        .nav-item.active {
+            border-left: 3px solid var(--accent-gold);
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.05) 0%, rgba(255,255,255,0) 100%);
+            color: var(--accent-gold);
+        }
+        .logout-btn { margin-top: auto; color: var(--accent-danger); border: 1px solid rgba(255, 74, 90, 0.15); cursor: pointer; }
+
+        /* --- CONTAINER FRAMEWORK DESIGN --- */
+        main { display: flex; flex-direction: column; min-height: 100vh; width: 100%; transition: padding-left 0.3s ease; }
+        header {
+            height: 75px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 20px; background: rgba(6, 6, 8, 0.4);
+            backdrop-filter: var(--glass-blur); position: sticky; top: 0; z-index: 90;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .menu-toggle-btn {
+            background: var(--bg-surface); border: 1px solid var(--border-subtle); color: #fff;
+            width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; cursor: pointer; font-size: 18px;
+        }
+        .view-title h2 { font-size: 18px; font-weight: 700; }
+        
+        .controls-row {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 16px; flex-wrap: wrap;
+        }
+        .open-modal-btn {
+            background: var(--accent-gold); color: #060608; border: none; padding: 12px 24px;
+            border-radius: 12px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
+        }
+        .open-modal-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(212,175,55,0.2); }
+
+        .workspace { padding: 20px; flex-grow: 1; max-width: 1600px; width: 100%; margin: 0 auto; }
+        .glass-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 24px; }
+        .glass-card h3 { font-size: 18px; margin-bottom: 20px; font-weight: 700; color: #fff; }
+
+        /* --- FIXED BUG: SCROLLABLE SMOOTH RESPONSIVE MODAL OVERLAY --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(4, 4, 6, 0.8);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 2000;
+            display: none; align-items: flex-start; justify-content: center; 
+            padding: 20px; overflow-y: auto; /* Fixes modal screen cut-off and enables internal flow scrolling */
+        }
+        .modal-card {
+            background: #0d0c12; border: 1px solid var(--border-subtle); border-radius: 24px;
+            width: 100%; max-width: 580px; padding: 32px; position: relative; box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+            margin: auto; /* Centers correctly across micro-viewports */
+        }
+        .close-modal-x {
+            position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer;
+        }
+        .modal-card h3 { font-size: 22px; font-weight: 800; margin-bottom: 6px; color: #fff; }
+        .modal-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 24px; }
+
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        .input-block { display: flex; flex-direction: column; gap: 6px; }
+        .input-block label { font-size: 11px; font-weight: 700; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .input-block input, .input-block textarea {
+            padding: 12px 16px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); border-radius: 12px; color: #fff; outline: none; font-size: 14px; transition: all 0.2s; width: 100%;
+        }
+        .input-block input:focus { border-color: var(--accent-gold); }
+        
+        /* --- BRAND NEW: RESPONSIVE PLAN GRID SELECTOR MATRIX --- */
+        .plan-matrix-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 4px;
+        }
+        @media(max-width: 420px) {
+            .plan-matrix-grid { grid-template-columns: 1fr; }
+        }
+        .plan-checkbox-label {
+            display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.01); border: 1px solid var(--border-subtle); border-radius: 12px; cursor: pointer; transition: all 0.2s; user-select: none;
+        }
+        .plan-checkbox-label:hover { border-color: rgba(212,175,55,0.4); background: rgba(255,255,255,0.03); }
+        .plan-checkbox-label input[type="checkbox"] {
+            width: 18px; height: 18px; accent-color: var(--accent-gold); cursor: pointer; width: auto;
+        }
+        .plan-checkbox-label span { font-size: 13px; font-weight: 600; color: var(--text-main); }
+        
+        /* Active Checkbox Styling Visual Cue */
+        .plan-checkbox-label:has(input:checked) {
+            border-color: var(--accent-gold); background: rgba(212, 175, 55, 0.05);
+        }
+
+        .file-upload-wrapper {
+            border: 2px dashed var(--border-subtle); padding: 20px; text-align: center; border-radius: 14px; background: rgba(0,0,0,0.2); cursor: pointer; transition: all 0.2s; display: block;
+        }
+        .file-upload-wrapper:hover { border-color: var(--accent-gold); }
+        .file-upload-wrapper i { font-size: 28px; color: var(--accent-gold); margin-bottom: 8px; }
+        .file-upload-wrapper p { font-size: 13px; color: var(--text-main); margin-bottom: 2px; padding: 0; text-transform: none; }
+        .file-upload-wrapper span { font-size: 11px; color: var(--text-muted); }
+        #prod-file { display: none; }
+
+        .action-btn {
+            background: var(--accent-gold); color: #060608; border: none; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s; margin-top: 10px; width: 100%; font-size: 15px;
+        }
+        .action-btn:disabled { background: var(--border-subtle); color: var(--text-muted); cursor: not-allowed; }
+
+        /* --- SYSTEM DATA REGISTRY TABLE --- */
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { padding: 14px; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border-subtle); text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
+        td { padding: 14px; border-bottom: 1px solid var(--border-subtle); color: var(--text-main); vertical-align: middle; }
+        
+        .prod-img-preview { width: 45px; height: 45px; border-radius: 8px; object-fit: cover; background: rgba(0,0,0,0.2); border: 1px solid var(--border-subtle); }
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; display: inline-block; margin-right: 4px; margin-bottom: 4px; }
+        .badge.instock { background: rgba(0, 255, 204, 0.1); color: var(--accent-neon); }
+        .badge.outstock { background: rgba(255, 74, 90, 0.1); color: var(--accent-danger); }
+        .badge.plan-tag { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border-subtle); }
+        .btn-delete { background: none; border: none; color: var(--accent-danger); cursor: pointer; font-size: 16px; padding: 4px; }
+
+        @media (min-width: 992px) {
+            aside { left: 0 !important; }
+            main { padding-left: 280px; }
+            .menu-toggle-btn, .close-sidebar-btn { display: none; }
+            #sidebar-backcloth { display: none !important; }
+            .workspace { padding: 40px; }
+            header { padding: 0 40px; }
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .span-full { grid-column: span 2; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar-backcloth"></div>
+
+    <!-- ==========================================
+         ADD PRODUCT POPUP MODAL INTERFACE (SCROLL FIXED)
+         ========================================== -->
+    <div class="modal-overlay" id="product-modal">
+        <div class="modal-card">
+            <button class="close-modal-x" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
+            <h3>Add New Product</h3>
+            <p>Select target deployment pathways and upload items safely across your platform.</p>
+            
+            <form id="form-add-product">
+                <div class="form-grid">
+                    
+                    <!-- TARGET PLAN ROUTING MATRIX MODULE -->
+                    <div class="input-block span-full">
+                        <label>Deploy & Display Target Channels (Select multiple)</label>
+                        <div class="plan-matrix-grid">
+                            <label class="plan-checkbox-label">
+                                <input type="checkbox" name="target-plans" value="Website" checked>
+                                <span>Main Website</span>
+                            </label>
+                            <label class="plan-checkbox-label">
+                                <input type="checkbox" name="target-plans" value="Silver Plan">
+                                <span>Silver Plan</span>
+                            </label>
+                            <label class="plan-checkbox-label">
+                                <input type="checkbox" name="target-plans" value="Gold Plan">
+                                <span>Gold Plan</span>
+                            </label>
+                            <label class="plan-checkbox-label">
+                                <input type="checkbox" name="target-plans" value="Platinum Plan">
+                                <span>Platinum Plan</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-block span-full">
+                        <label>Product Title</label>
+                        <input type="text" id="prod-title" placeholder="e.g. Vintage Gold Watch" required>
+                    </div>
+                    <div class="input-block">
+                        <label>Price ($)</label>
+                        <input type="number" id="prod-price" step="0.01" placeholder="249.99" required>
+                    </div>
+                    <div class="input-block">
+                        <label>Stock Count</label>
+                        <input type="number" id="prod-stock" placeholder="25" required>
+                    </div>
+                    
+                    <div class="input-block span-full">
+                        <label>Product Image File</label>
+                        <label for="prod-file" class="file-upload-wrapper">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p id="upload-status-text">Click to select product image</p>
+                            <span>Supports PNG, JPG, JPEG up to 32MB</span>
+                        </label>
+                        <input type="file" id="prod-file" accept="image/*" required>
+                    </div>
+
+                    <div class="input-block span-full">
+                        <label>Product Description</label>
+                        <textarea id="prod-desc" rows="3" placeholder="Enter specifications..." required></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="action-btn" id="btn-submit-form">EXECUTE CLOUD UPLOAD & SAVE</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MAIN ADMIN SUITE BASE WINDOW
+         ========================================== -->
+    <div id="admin-panel">
+        <aside id="app-sidebar">
+            <div class="brand-zone">
+                <div class="brand-title">
+                    <i class="fa-solid fa-shield-halved logo-icon"></i>
+                    <h1>CORE SYSTEM</h1>
+                </div>
+                <button class="close-sidebar-btn" id="btn-close-sidebar"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <nav>
+                <a href="admin.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i>Analytics Hub</a>
+                <a href="Products-admin.html" class="nav-item active"><i class="fa-solid fa-box-open"></i>Product Manager</a>
+                <a href="Packages-admin.html" class="nav-item"><i class="fa-solid fa-layer-group"></i>Package Config</a>
+                <a href="KYC-admin.html" class="nav-item"><i class="fa-solid fa-id-card"></i>KYC Verification</a>
+                <a href="Transactions-admin.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i>Transactions</a>
+                <a href="Sellers-admin.html" class="nav-item"><i class="fa-solid fa-users-gear"></i>Active Sellers</a>
+                <a href="Orders-admin.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i>Order Registry</a>
+                <a href="Chat-admin.html" class="nav-item"><i class="fa-solid fa-comments"></i>Live Support</a>
+                <div class="nav-item logout-btn" id="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Exit Session</div>
+            </nav>
+        </aside>
+
+        <main>
+            <header>
+                <div class="header-left">
+                    <button class="menu-toggle-btn" id="btn-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                    <div class="view-title"><h2>Product Manager</h2></div>
+                </div>
+            </header>
+            
+            <div class="workspace">
+                <div class="controls-row">
+                    <div style="color: var(--text-muted); font-size: 14px;">Manage store layout and inventory records dynamically.</div>
+                    <button class="open-modal-btn" id="btn-open-modal"><i class="fa-solid fa-plus"></i> Add New Product</button>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Active Inventory Stream</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Visual</th>
+                                    <th>Product Info</th>
+                                    <th>Targets</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product-stream-target">
+                                <!-- Dynamic records from Firebase injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        if (localStorage.getItem('kogan_admin_authenticated') !== 'true') {
+            window.location.href = 'admin.html';
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+            authDomain: "koganstoree.firebaseapp.com",
+            databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+            projectId: "koganstoree",
+            storageBucket: "koganstoree.firebasestorage.app",
+            messagingSenderId: "166010280262",
+            appId: "1:166010280262:web:a29c6fc7b8251c9997ed47",
+            measurementId: "G-C2WRS6MQV0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const appSidebar = document.getElementById('app-sidebar');
+        const btnMenuToggle = document.getElementById('btn-menu-toggle');
+        const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+        const sidebarBackcloth = document.getElementById('sidebar-backcloth');
+
+        const productModal = document.getElementById('product-modal');
+        const btnOpenModal = document.getElementById('btn-open-modal');
+        const btnCloseModal = document.getElementById('btn-close-modal');
+        const fileInput = document.getElementById('prod-file');
+        const uploadStatusText = document.getElementById('upload-status-text');
+        const btnSubmitForm = document.getElementById('btn-submit-form');
+
+        btnOpenModal.addEventListener('click', () => {
+            productModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; /* Locks underlying main layer only */
+        });
+        
+        const closeModalWindow = () => {
+            productModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; /* Restores primary layer flow */
+            document.getElementById('form-add-product').reset();
+            uploadStatusText.innerText = "Click to select product image";
+            uploadStatusText.style.color = 'var(--text-main)';
+        };
+        btnCloseModal.addEventListener('click', closeModalWindow);
+
+        btnMenuToggle.addEventListener('click', () => { appSidebar.classList.add('mobile-open'); sidebarBackcloth.style.display = 'block'; });
+        const closeSidebarFunc = () => { appSidebar.classList.remove('mobile-open'); sidebarBackcloth.style.display = 'none'; };
+        btnCloseSidebar.addEventListener('click', closeSidebarFunc);
+        sidebarBackcloth.addEventListener('click', closeSidebarFunc);
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                uploadStatusText.innerText = `Selected: ${fileInput.files[0].name}`;
+                uploadStatusText.style.color = 'var(--accent-neon)';
+            }
+        });
+
+        // Form Process Action Block
+        document.getElementById('form-add-product').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Gather selected checkbox deployment platforms
+            const selectedPlans = [];
+            const checkboxes = document.querySelectorAll('input[name="target-plans"]:checked');
+            checkboxes.forEach(cb => selectedPlans.push(cb.value));
+
+            if (selectedPlans.length === 0) {
+                alert("Please select at least one deployment target (Website or a Specific Plan)!");
+                return;
+            }
+
+            btnSubmitForm.disabled = true;
+            btnSubmitForm.innerText = "UPLOADING FILE IMAGE TO IMGBB...";
+
+            const file = fileInput.files[0];
+            const title = document.getElementById('prod-title').value.trim();
+            const price = parseFloat(document.getElementById('prod-price').value);
+            const stock = parseInt(document.getElementById('prod-stock').value);
+            const desc = document.getElementById('prod-desc').value.trim();
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const imgbbResponse = await fetch('https://api.imgbb.com/1/upload?key=fa70353173f66f0a3caab803eec6482a', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const imgbbResult = await imgbbResponse.json();
+
+                if (imgbbResult.success) {
+                    const uploadedImageUrl = imgbbResult.data.url;
+
+                    btnSubmitForm.innerText = "INDEXING WITH FIREBASE SYSTEM...";
+                    
+                    const productListRef = ref(db, 'products');
+                    const newProductRef = push(productListRef);
+                    
+                    await set(newProductRef, {
+                        title: title,
+                        price: price,
+                        stock: stock,
+                        image: uploadedImageUrl,
+                        description: desc,
+                        channels: selectedPlans, // Saves configuration targets as structured payload array
+                        timestamp: Date.now()
+                    });
+
+                    closeModalWindow();
+                } else {
+                    throw new Error(imgbbResult.error.message || "ImgBB file processing rejection error.");
+                }
+            } catch (error) {
+                alert("Cloud transmission pipeline blocked: " + error.message);
+            } finally {
+                btnSubmitForm.disabled = false;
+                btnSubmitForm.innerText = "EXECUTE CLOUD UPLOAD & SAVE";
+            }
+        });
+
+        // Reader Stream Rendering Loop Engine
+        const productStreamTarget = document.getElementById('product-stream-target');
+        onValue(ref(db, 'products'), (snapshot) => {
+            productStreamTarget.innerHTML = '';
+            
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                Object.keys(data).forEach(productId => {
+                    const product = data[productId];
+                    
+                    const stockBadge = product.stock > 0  
+                        ? `<span class="badge instock">In Stock (${product.stock})</span>`
+                        : `<span class="badge outstock">Out of Stock</span>`;
+
+                    // Parse channels display layout nicely inside current row framework
+                    let channelBadges = '';
+                    if (product.channels && Array.isArray(product.channels)) {
+                        product.channels.forEach(ch => {
+                            channelBadges += `<span class="badge plan-tag">${ch}</span>`;
+                        });
+                    } else if (product.channels) {
+                        channelBadges = `<span class="badge plan-tag">${product.channels}</span>`;
+                    } else {
+                        channelBadges = `<span class="badge plan-tag" style="opacity:0.4;">None</span>`;
+                    }
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><img src="${product.image}" class="prod-img-preview" alt="Thumbnail"></td>
+                        <td>
+                            <strong style="color:#fff; display:block;">${product.title}</strong>
+                            <span style="font-size:12px; color:var(--text-muted); display:block; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${product.description}</span>
+                        </td>
+                        <td><div style="max-width: 180px; display: flex; flex-wrap: wrap;">${channelBadges}</div></td>
+                        <td style="font-weight:700; color:var(--accent-gold);">$${product.price.toFixed(2)}</td>
+                        <td>${stockBadge}</td>
+                        <td>
+                            <button class="btn-delete" data-id="${productId}"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    `;
+                    productStreamTarget.appendChild(row);
+                });
+
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const targetId = btn.getAttribute('data-id');
+                        if (confirm("Permanently strip this product from the master database catalog?")) {
+                            await remove(ref(db, `products/${targetId}`));
+                        }
+                    });
+                });
+            } else {
+                productStreamTarget.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:30px;">No items currently added to your storefront.</td></tr>`;
+            }
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('kogan_admin_authenticated');
+            window.location.href = 'admin.html';
+        });
+    </script>
+</body>
+</html>

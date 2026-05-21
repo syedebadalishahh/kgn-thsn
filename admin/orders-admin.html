@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders System FIXED</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    :root {
+        --bg-base: #060608;
+        --bg-surface: rgba(255, 255, 255, 0.02);
+        --border-subtle: rgba(255, 255, 255, 0.06);
+        --text-main: #f3f4f6;
+        --text-muted: #8e929b;
+        --accent-gold: #d4af37;
+        --accent-danger: #ff4a5a;
+        --glass-blur: blur(20px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+    /* Sidebar and Layout */
+    #sidebar-backcloth { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 900; display: none; }
+    aside { background: rgba(10, 10, 14, 0.85); border-right: 1px solid var(--border-subtle); backdrop-filter: var(--glass-blur); padding: 30px 20px; display: flex; flex-direction: column; gap: 30px; z-index: 999; position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    aside.mobile-open { left: 0; }
+    .brand-zone { display: flex; align-items: center; justify-content: space-between; padding-left: 10px; }
+    .brand-title { display: flex; align-items: center; gap: 12px; }
+    .logo-icon { color: var(--accent-gold); font-size: 22px; }
+    .brand-zone h1 { font-size: 18px; font-weight: 800; letter-spacing: 1px; color: white; }
+    .close-sidebar-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; display: block; }
+
+    nav { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; overflow-y: auto; }
+    .nav-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 12px; transition: all 0.2s ease; }
+    .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: #fff; }
+    .nav-item.active { border-left: 3px solid var(--accent-gold); background: linear-gradient(90deg, rgba(212, 175, 55, 0.05) 0%, rgba(255,255,255,0) 100%); color: var(--accent-gold); }
+    .logout-btn { margin-top: auto; color: var(--accent-danger); border: 1px solid rgba(255, 74, 90, 0.15); cursor: pointer; }
+
+    main { display: flex; flex-direction: column; min-height: 100vh; width: 100%; transition: padding-left 0.3s ease; }
+    header { height: 75px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; padding: 0 20px; background: rgba(6, 6, 8, 0.4); backdrop-filter: var(--glass-blur); position: sticky; top: 0; z-index: 90; flex-shrink: 0; }
+    .menu-toggle-btn { background: var(--bg-surface); border: 1px solid var(--border-subtle); color: #fff; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; font-size: 18px; margin-right: 16px; }
+    .view-title h2 { font-size: 18px; font-weight: 700; color: white; }
+    
+    .workspace { padding: 20px; flex-grow: 1; max-width: 1600px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; }
+
+    /* Tables & Content elements integrated styles */
+    h3.section-title {
+        margin-top: 30px;
+        margin-bottom: 15px;
+        color: var(--text-muted);
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 40px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    th, td {
+        padding: 16px;
+        border-bottom: 1px solid var(--border-subtle);
+        font-size: 14px;
+        text-align: left;
+    }
+
+    th {
+        color: var(--text-muted);
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    td {
+        color: var(--text-main);
+    }
+
+    td small {
+        color: var(--text-muted);
+        display: inline-block;
+        margin-top: 4px;
+    }
+
+    .btn {
+        padding: 8px 14px;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+    .deliver { background: #22c55e; color: white; margin-right: 5px; }
+    .cancel { background: var(--accent-danger); color: white; }
+
+    .badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(34, 197, 94, 0.15);
+        color: #22c55e;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    @media (max-width: 768px) {
+        .workspace { padding: 15px; }
+        table { display: block; overflow-x: auto; white-space: nowrap; }
+    }
+
+    @media (min-width: 992px) { aside { left: 0 !important; } main { padding-left: 280px; } .menu-toggle-btn { display: none; } .close-sidebar-btn { display: none; } .workspace { padding: 40px; } }
+</style>
+</head>
+<body>
+
+    <div id="sidebar-backcloth"></div>
+
+    <aside id="app-sidebar">
+        <div class="brand-zone">
+            <div class="brand-title">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <h1>CORE SYSTEM</h1>
+            </div>
+            <button class="close-sidebar-btn" id="btn-close-sidebar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <nav>
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i>Analytics Hub</a>
+            <a href="Products-admin.html" class="nav-item"><i class="fa-solid fa-box-open"></i>Product Manager</a>
+            <a href="Packages-admin.html" class="nav-item"><i class="fa-solid fa-layer-group"></i>Package Config</a>
+            <a href="KYC-admin.html" class="nav-item"><i class="fa-solid fa-id-card"></i>KYC Verification</a>
+            <a href="Transactions-admin.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i>Transactions</a>
+            <a href="Sellers-admin.html" class="nav-item"><i class="fa-solid fa-users-gear"></i>Active Sellers</a>
+            <a href="Orders-admin.html" class="nav-item active"><i class="fa-solid fa-cart-shopping"></i>Order Registry</a>
+            <a href="Chat-admin.html" class="nav-item"><i class="fa-solid fa-comments"></i>Live Support</a>
+            <div class="nav-item logout-btn" id="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Exit Session</div>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div style="display: flex; align-items: center;">
+                <button class="menu-toggle-btn" id="btn-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                <div class="view-title"><h2>🚀 Orders System (ACTIVE + COMPLETED + COMMISSION FIXED)</h2></div>
+            </div>
+        </header>
+        
+        <div class="workspace">
+
+            <h3 class="section-title">🟡 Active Orders</h3>
+            <table>
+            <thead>
+            <tr>
+            <th>Product</th>
+            <th>Buyer</th>
+            <th>Amount</th>
+            <th>Referral</th>
+            <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="activeOrders"></tbody>
+            </table>
+
+            <h3 class="section-title">🟢 Completed Orders</h3>
+            <table>
+            <thead>
+            <tr>
+            <th>Product</th>
+            <th>Buyer</th>
+            <th>Amount</th>
+            <th>Referral</th>
+            <th>Status</th>
+            </tr>
+            </thead>
+            <tbody id="completedOrders"></tbody>
+            </table>
+
+        </div>
+    </main>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const app = initializeApp({
+    apiKey:"AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+    databaseURL:"https://koganstoree-default-rtdb.firebaseio.com"
+});
+
+const db = getDatabase(app);
+
+// Sidebar Navigation Logic
+document.getElementById('btn-menu-toggle').addEventListener('click', () => { document.getElementById('app-sidebar').classList.add('mobile-open'); document.getElementById('sidebar-backcloth').style.display = 'block'; });
+document.getElementById('btn-close-sidebar').addEventListener('click', () => { document.getElementById('app-sidebar').classList.remove('mobile-open'); document.getElementById('sidebar-backcloth').style.display = 'none'; });
+document.getElementById('btn-logout').addEventListener('click', () => { localStorage.removeItem('kogan_admin_authenticated'); window.location.href = 'admin.html'; });
+
+// LOAD ORDERS
+onValue(ref(db,"orders"), async (snap)=>{
+
+let orders = snap.val() || {};
+
+let activeHTML = "";
+let completedHTML = "";
+
+for(let id in orders){
+
+let o = orders[id];
+
+// GET PRODUCT
+let pSnap = await get(ref(db,"products/"+o.productId));
+let product = pSnap.val() || {};
+
+// REFERRAL
+let referral = o.ref || o.referralId || "Direct";
+
+// BUYER DATA
+let buyer = o.name || "N/A";
+let address = `${o.address || ""}, ${o.city || ""}, ${o.country || ""}`;
+
+// AMOUNT
+let amount = o.total || 0;
+
+// ACTIVE
+if(o.status !== "delivered"){
+
+activeHTML += `
+<tr>
+<td>${product.title || "N/A"}</td>
+<td>${buyer}<br><small>${address}</small></td>
+<td>$${amount}</td>
+<td>${referral}</td>
+<td>
+<button class="btn deliver" onclick="deliver('${id}','${o.productId}','${referral}',${amount})">Deliver</button>
+<button class="btn cancel" onclick="cancel('${id}')">Cancel</button>
+</td>
+</tr>
+`;
+
+}else{
+
+completedHTML += `
+<tr>
+<td>${product.title || "N/A"}</td>
+<td>${buyer}<br><small>${address}</small></td>
+<td>$${amount}</td>
+<td>${referral}</td>
+<td><span class="badge">Delivered</span></td>
+</tr>
+`;
+
+}
+
+}
+
+document.getElementById("activeOrders").innerHTML = activeHTML;
+document.getElementById("completedOrders").innerHTML = completedHTML;
+
+});
+
+// DELIVERY + COMMISSION SYSTEM
+window.deliver = async (orderId, productId, referral, amount)=>{
+
+await update(ref(db,"orders/"+orderId),{
+    status:"delivered"
+});
+
+// NO REFERRAL
+if(!referral || referral==="Direct") return;
+
+// GET USER
+let userSnap = await get(ref(db,"users/"+referral));
+let user = userSnap.val();
+
+if(!user) return;
+
+// GET PLAN
+let planKey = (user.plan || "silver").toLowerCase();
+
+let planSnap = await get(ref(db,"system_plans_config/"+planKey));
+let plan = planSnap.val();
+
+if(!plan) return;
+
+// CALCULATE COMMISSION
+let commission = (amount * plan.commission) / 100;
+
+// UPDATE BALANCE
+let newBalance = (user.balance || 0) + commission;
+
+await update(ref(db,"users/"+referral),{
+    balance:newBalance
+});
+
+alert(`Delivered + $${commission} added to ${referral}`);
+
+};
+
+// CANCEL
+window.cancel = async (id)=>{
+if(confirm("Cancel Order?")){
+await update(ref(db,"orders/"+id),{
+    status:"cancelled"
+});
+}
+};
+
+</script>
+
+</body>
+</html>

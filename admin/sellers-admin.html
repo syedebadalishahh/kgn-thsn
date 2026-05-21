@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Active Sellers - Core System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060608;
+            --bg-surface: rgba(255, 255, 255, 0.02);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-main: #f3f4f6;
+            --text-muted: #8e929b;
+            --accent-gold: #d4af37;
+            --accent-danger: #ff4a5a;
+            --glass-blur: blur(20px);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-base); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+
+        /* Sidebar and Layout */
+        #sidebar-backcloth { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 900; display: none; }
+        aside { background: rgba(10, 10, 14, 0.85); border-right: 1px solid var(--border-subtle); backdrop-filter: var(--glass-blur); padding: 30px 20px; display: flex; flex-direction: column; gap: 30px; z-index: 999; position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        aside.mobile-open { left: 0; }
+        .brand-zone { display: flex; align-items: center; justify-content: space-between; padding-left: 10px; }
+        .brand-title { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { color: var(--accent-gold); font-size: 22px; }
+        .brand-zone h1 { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        .close-sidebar-btn { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; display: block; }
+
+        nav { display: flex; flex-direction: column; gap: 6px; flex-grow: 1; overflow-y: auto; }
+        .nav-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 600; border-radius: 12px; transition: all 0.2s ease; }
+        .nav-item.active { border-left: 3px solid var(--accent-gold); background: linear-gradient(90deg, rgba(212, 175, 55, 0.05) 0%, rgba(255,255,255,0) 100%); color: var(--accent-gold); }
+        .logout-btn { margin-top: auto; color: var(--accent-danger); border: 1px solid rgba(255, 74, 90, 0.15); cursor: pointer; }
+
+        main { display: flex; flex-direction: column; min-height: 100vh; width: 100%; transition: padding-left 0.3s ease; }
+        header { height: 75px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; padding: 0 20px; background: rgba(6, 6, 8, 0.4); backdrop-filter: var(--glass-blur); position: sticky; top: 0; z-index: 90; }
+        .menu-toggle-btn { background: var(--bg-surface); border: 1px solid var(--border-subtle); color: #fff; width: 42px; height: 42px; border-radius: 10px; cursor: pointer; font-size: 18px; margin-right: 16px; }
+        
+        .workspace { padding: 20px; flex-grow: 1; max-width: 1600px; width: 100%; margin: 0 auto; }
+        .glass-card { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 20px; padding: 20px; margin-bottom: 24px; }
+        
+        /* Inputs & Tables */
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        input, select { background: var(--bg-base); border: 1px solid var(--border-subtle); color: white; padding: 8px 12px; border-radius: 8px; }
+        
+        .table-wrapper { width: 100%; overflow-x: auto; }
+        table { width: 100%; min-width: 900px; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { padding: 14px; color: var(--text-muted); font-weight: 700; border-bottom: 2px solid var(--border-subtle); text-transform: uppercase; font-size: 11px; }
+        td { padding: 14px; border-bottom: 1px solid var(--border-subtle); color: var(--text-main); white-space: nowrap; }
+        
+        .btn-action { background: var(--bg-surface); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-right: 5px; }
+        .btn-action:hover { border-color: var(--accent-gold); }
+
+        @media (min-width: 992px) { aside { left: 0 !important; } main { padding-left: 280px; } .menu-toggle-btn { display: none; } .close-sidebar-btn { display: none; } .workspace { padding: 40px; } }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar-backcloth"></div>
+
+    <aside id="app-sidebar">
+        <div class="brand-zone">
+            <div class="brand-title">
+                <i class="fa-solid fa-shield-halved logo-icon"></i>
+                <h1>CORE SYSTEM</h1>
+            </div>
+            <button class="close-sidebar-btn" id="btn-close-sidebar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <nav>
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i>Analytics Hub</a>
+            <a href="Products-admin.html" class="nav-item"><i class="fa-solid fa-box-open"></i>Product Manager</a>
+            <a href="Packages-admin.html" class="nav-item"><i class="fa-solid fa-layer-group"></i>Package Config</a>
+            <a href="KYC-admin.html" class="nav-item"><i class="fa-solid fa-id-card"></i>KYC Verification</a>
+            <a href="Transactions-admin.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i>Transactions</a>
+            <a href="Sellers-admin.html" class="nav-item active"><i class="fa-solid fa-users-gear"></i>Active Sellers</a>
+            <a href="Orders-admin.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i>Order Registry</a>
+            <a href="Chat-admin.html" class="nav-item"><i class="fa-solid fa-comments"></i>Live Support</a>
+            <div class="nav-item logout-btn" id="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Exit Session</div>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <button class="menu-toggle-btn" id="btn-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+            <h2>User Management Center</h2>
+        </header>
+        
+        <div class="workspace">
+            <div class="glass-card">
+                <div class="controls">
+                    <input type="text" id="searchBar" placeholder="Search users..." onkeyup="filterTable()">
+                    <button class="btn-action" onclick="exportCSV()">Export Data</button>
+                </div>
+                <div class="table-wrapper">
+                    <table id="userTable">
+                        <thead>
+                            <tr>
+                                <th>Name / Email / User</th>
+                                <th>Balance</th>
+                                <th>Plan</th>
+                                <th>KYC</th>
+                                <th>Sales</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+            authDomain: "koganstoree.firebaseapp.com",
+            databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+            projectId: "koganstoree"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Sidebar logic
+        document.getElementById('btn-menu-toggle').addEventListener('click', () => { document.getElementById('app-sidebar').classList.add('mobile-open'); document.getElementById('sidebar-backcloth').style.display = 'block'; });
+        document.getElementById('btn-close-sidebar').addEventListener('click', () => { document.getElementById('app-sidebar').classList.remove('mobile-open'); document.getElementById('sidebar-backcloth').style.display = 'none'; });
+
+        onValue(ref(db, 'users'), (snapshot) => {
+            const users = snapshot.val() || {};
+            const tbody = document.getElementById('user-body');
+            tbody.innerHTML = Object.entries(users).map(([id, u]) => `
+                <tr>
+                    <td><strong>${u.name || 'N/A'}</strong><br>${u.email || '-'}<br><small>@${u.username || '-'}</small></td>
+                    <td>$<input type="number" value="${u.balance || 0}" onchange="updateData('${id}', {balance: parseFloat(this.value)})" style="width: 80px;"></td>
+                    <td>
+                        <select onchange="updateData('${id}', {plan: this.value})">
+                            <option value="Silver" ${u.plan === 'Silver' ? 'selected' : ''}>Silver</option>
+                            <option value="Gold" ${u.plan === 'Gold' ? 'selected' : ''}>Gold</option>
+                            <option value="Platinum" ${u.plan === 'Platinum' ? 'selected' : ''}>Platinum</option>
+                            <option value="Diamond" ${u.plan === 'Diamond' ? 'selected' : ''}>Diamond</option>
+                        </select>
+                    </td>
+                    <td>${u.kyc === 'verified' ? '✅' : '❌'}</td>
+                    <td>${u.sales || 0}</td>
+                    <td>
+                        <button class="btn-action" onclick="deleteUser('${id}')">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        });
+
+        // Universal update function
+        window.updateData = (id, data) => update(ref(db, `users/${id}`), data);
+        window.deleteUser = (id) => { if(confirm('Delete this user?')) remove(ref(db, `users/${id}`)); };
+        
+        window.filterTable = () => {
+            const val = document.getElementById('searchBar').value.toLowerCase();
+            document.querySelectorAll('#user-body tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(val) ? '' : 'none';
+            });
+        };
+
+        window.exportCSV = () => {
+            let csv = "Name,Email,Username,Balance,Plan\n";
+            document.querySelectorAll("#user-body tr").forEach(row => {
+                let cols = row.querySelectorAll("td");
+                csv += `${cols[0].innerText.replace(/\n/g, ' ')},${cols[1].querySelector('input').value},${cols[2].querySelector('select').value}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'users_export.csv'; a.click();
+        };
+
+        document.getElementById('btn-logout').addEventListener('click', () => { localStorage.removeItem('kogan_admin_authenticated'); window.location.href = 'admin.html'; });
+    </script>
+</body>
+</html>

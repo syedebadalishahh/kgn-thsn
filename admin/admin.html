@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kogan Store - Core Master Suite</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-base: #060608;
+            --bg-surface: rgba(255, 255, 255, 0.02);
+            --border-glow: rgba(212, 175, 55, 0.15);
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-main: #f3f4f6;
+            --text-muted: #8e929b;
+            --accent-gold: #d4af37;
+            --accent-neon: #00ffcc;
+            --accent-danger: #ff4a5a;
+            --glass-blur: blur(20px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: radial-gradient(circle at 50% 50%, #14121a 0%, #060608 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- AUTH CHECKPOINT OVERLAY --- */
+        #auth-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #110f18 0%, #060608 100%);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: var(--bg-surface);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--border-subtle);
+            padding: 35px 25px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .auth-card p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 28px;
+        }
+
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--accent-gold);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            border-color: var(--accent-gold);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent-gold);
+            border: none;
+            border-radius: 12px;
+            color: #060608;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-message {
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status-message.error {
+            background: rgba(255, 74, 90, 0.1);
+            border: 1px solid rgba(255, 74, 90, 0.2);
+            color: var(--accent-danger);
+        }
+
+        .status-message.success {
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            color: var(--accent-neon);
+        }
+
+        /* --- RESPONSIVE APP LAYOUT --- */
+        #admin-panel {
+            display: none;
+            min-height: 100vh;
+        }
+
+        /* Responsive Sidebar Drawer Matrix */
+        aside {
+            background: rgba(10, 10, 14, 0.85);
+            border-right: 1px solid var(--border-subtle);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            z-index: 999;
+            position: fixed;
+            top: 0;
+            left: -280px; /* Hidden off-screen on mobile by default */
+            width: 280px;
+            height: 100vh;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        aside.mobile-open {
+            left: 0;
+        }
+
+        .brand-zone {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: 10px;
+        }
+
+        .brand-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-zone .logo-icon {
+            color: var(--accent-gold);
+            font-size: 22px;
+        }
+
+        .brand-zone h1 {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .close-sidebar-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20px;
+            cursor: pointer;
+            display: none; /* Desktop hidden */
+        }
+
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item i {
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--accent-gold);
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.05) 0%, rgba(255,255,255,0) 100%);
+            color: var(--accent-gold);
+        }
+
+        .logout-btn {
+            margin-top: auto;
+            color: var(--accent-danger);
+            border: 1px solid rgba(255, 74, 90, 0.15);
+            cursor: pointer;
+        }
+
+        /* Workspace Delivery Wrapper */
+        main {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+            transition: padding-left 0.3s ease;
+        }
+
+        header {
+            height: 75px;
+            border-bottom: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: rgba(6, 6, 8, 0.4);
+            backdrop-filter: var(--glass-blur);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle-btn {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            color: #fff;
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .view-title h2 { font-size: 18px; font-weight: 700; }
+        .status-badge {
+            background: rgba(0, 255, 204, 0.08);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            color: var(--accent-neon);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .workspace { 
+            padding: 20px; 
+            flex-grow: 1;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* --- PREMIUM METRICS SYSTEM GRID --- */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-gold);
+            opacity: 0.7;
+        }
+
+        .metric-card.neon-bar::before { background: var(--accent-neon); }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-header i {
+            font-size: 18px;
+            color: rgba(255,255,255,0.15);
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .metric-footer {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .metric-footer span { color: var(--accent-neon); font-weight: 600; }
+
+        .glass-card { 
+            background: var(--bg-surface); 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 20px; 
+            padding: 24px; 
+        }
+
+        .glass-card h3 { font-size: 18px; margin-bottom: 8px; font-weight: 700; }
+        .glass-card p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+        /* Dark overlay blur when sidebar is active on mobile screens */
+        #sidebar-backcloth {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 900;
+            display: none;
+        }
+
+        /* --- RESPONSIVE MEDIA BREAKPOINTS --- */
+        @media (min-width: 992px) {
+            aside {
+                left: 0 !important; /* Keep fixed visible */
+            }
+            main {
+                padding-left: 280px; /* Permanent spatial gap for sidebar */
+            }
+            .menu-toggle-btn {
+                display: none; /* Hide toggle button on desktop */
+            }
+            .close-sidebar-btn {
+                display: none;
+            }
+            #sidebar-backcloth {
+                display: none !important;
+            }
+            .workspace {
+                padding: 40px;
+            }
+            header {
+                padding: 0 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar-backcloth"></div>
+
+    <!-- ==========================================
+         DYNAMIC CONFIG/LOGIN CHECKPOINT INTERFACE
+         ========================================== -->
+    <div id="auth-overlay">
+        <!-- Login Card Mode -->
+        <div class="auth-card" id="card-login" style="display: none;">
+            <h2>KOGAN PANEL</h2>
+            <p>Sign in to your administrator dashboard</p>
+            <div id="login-msg" class="status-message error"></div>
+            <form id="form-login">
+                <div class="input-group">
+                    <label>Admin Username</label>
+                    <input type="text" id="login-username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <label>Security Password</label>
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="auth-btn" id="btn-login-text">LOG IN</button>
+            </form>
+        </div>
+
+        <!-- Initial Setup Card Mode -->
+        <div class="auth-card" id="card-setup" style="display: none;">
+            <h2 style="color: var(--accent-gold);">INITIAL SETUP</h2>
+            <p>No master admin profile found. Configure credentials below.</p>
+            <div id="setup-msg" class="status-message"></div>
+            <form id="form-setup">
+                <div class="input-group">
+                    <label>Choose Admin Username</label>
+                    <input type="text" id="setup-username" placeholder="e.g. MasterAdmin" required>
+                </div>
+                <div class="input-group">
+                    <label>Choose Admin Password</label>
+                    <input type="password" id="setup-password" placeholder="Choose a strong key" required>
+                </div>
+                <button type="submit" class="auth-btn" id="btn-setup-text" style="background: var(--accent-neon); color: #060608;">SAVE ADMIN INITIALS</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MAIN ADMIN PANEL MODULE
+         ========================================== -->
+    <div id="admin-panel">
+        <aside id="app-sidebar">
+            <div class="brand-zone">
+                <div class="brand-title">
+                    <i class="fa-solid fa-shield-halved logo-icon"></i>
+                    <h1>CORE SYSTEM</h1>
+                </div>
+                <button class="close-sidebar-btn" id="btn-close-sidebar"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <nav>
+                <!-- This current page is Analytics Hub -->
+                <a href="admin.html" class="nav-item active"><i class="fa-solid fa-chart-pie"></i>Analytics Hub</a>
+                
+                <!-- Explicit external page redirections -->
+                <a href="Products-admin.html" class="nav-item"><i class="fa-solid fa-box-open"></i>Product Manager</a>
+                <a href="Packages-admin.html" class="nav-item"><i class="fa-solid fa-layer-group"></i>Package Config</a>
+                <a href="KYC-admin.html" class="nav-item"><i class="fa-solid fa-id-card"></i>KYC Verification</a>
+                <a href="Transactions-admin.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i>Transactions</a>
+                <a href="Sellers-admin.html" class="nav-item"><i class="fa-solid fa-users-gear"></i>Active Sellers</a>
+                <a href="Orders-admin.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i>Order Registry</a>
+                <a href="Chat-admin.html" class="nav-item"><i class="fa-solid fa-comments"></i>Live Support</a>
+                
+                <div class="nav-item logout-btn" id="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Exit Session</div>
+            </nav>
+        </aside>
+
+        <main>
+            <header>
+                <div class="header-left">
+                    <button class="menu-toggle-btn" id="btn-menu-toggle"><i class="fa-solid fa-bars"></i></button>
+                    <div class="view-title"><h2>Analytics Hub</h2></div>
+                </div>
+                <div class="admin-meta"><span class="status-badge">SECURE ROOT</span></div>
+            </header>
+            
+            <div class="workspace">
+                
+                <!-- BEAUTIFUL LIVE STATS GRID METRICS -->
+                <div class="analytics-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">Today Revenue <i class="fa-solid fa-calendar-day"></i></div>
+                        <div class="metric-value" id="stat-today-revenue">$0.00</div>
+                        <div class="metric-footer"><span>0%</span> from yesterday</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-header">This Month Revenue <i class="fa-solid fa-chart-line"></i></div>
+                        <div class="metric-value" id="stat-month-revenue">$0.00</div>
+                        <div class="metric-footer">Current calendar cycle</div>
+                    </div>
+                    <div class="metric-card neon-bar">
+                        <div class="metric-header">Total Global Sales <i class="fa-solid fa-bag-shopping"></i></div>
+                        <div class="metric-value" id="stat-total-sales">0</div>
+                        <div class="metric-footer">Completed checkouts</div>
+                    </div>
+                    <div class="metric-card neon-bar">
+                        <div class="metric-header">Sellers Registered <i class="fa-solid fa-user-tie"></i></div>
+                        <div class="metric-value" id="stat-sellers-count">0</div>
+                        <div class="metric-footer">This week processing</div>
+                    </div>
+                </div>
+
+                <div class="glass-card">
+                    <h3>Platform Synced Status</h3>
+                    <p>Your administration engine is successfully synchronized with your real-time database cluster (`koganstoree-default-rtdb`). All operations executed across sub-modules will automatically update these analytic cards instantaneously.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FIREBASE IMPORT AS MODULE FROM THE INTERNET -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // Your exact verified active database configuration layout
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+            authDomain: "koganstoree.firebaseapp.com",
+            databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+            projectId: "koganstoree",
+            storageBucket: "koganstoree.firebasestorage.app",
+            messagingSenderId: "166010280262",
+            appId: "1:166010280262:web:a29c6fc7b8251c9997ed47",
+            measurementId: "G-C2WRS6MQV0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+      // Core Node UI Hooks
+        const cardLogin = document.getElementById('card-login');
+        const cardSetup = document.getElementById('card-setup');
+        const loginMsg = document.getElementById('login-msg');
+        const setupMsg = document.getElementById('setup-msg');
+        const authOverlay = document.getElementById('auth-overlay');
+        const adminPanel = document.getElementById('admin-panel');
+
+        // Responsive Elements Hooks
+        const appSidebar = document.getElementById('app-sidebar');
+        const btnMenuToggle = document.getElementById('btn-menu-toggle');
+        const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+        const sidebarBackcloth = document.getElementById('sidebar-backcloth');
+
+        // Mobile Sidebar UI Controls Trigger
+        btnMenuToggle.addEventListener('click', () => {
+            appSidebar.classList.add('mobile-open');
+            sidebarBackcloth.style.display = 'block';
+        });
+
+        const closeSidebarFunc = () => {
+            appSidebar.classList.remove('mobile-open');
+            sidebarBackcloth.style.display = 'none';
+        };
+
+        btnCloseSidebar.addEventListener('click', closeSidebarFunc);
+        sidebarBackcloth.addEventListener('click', closeSidebarFunc);
+
+
+        // Check local storage session authorization persistence
+        if (localStorage.getItem('kogan_admin_authenticated') === 'true') {
+            grantAccessToDashboard();
+        } else {
+            auditDatabaseConfiguration();
+        }
+
+        // Search inside user node matrix to handle setup route injection state
+        async function auditDatabaseConfiguration() {
+            try {
+                const adminRef = ref(db, 'users/admin');
+                const snapshot = await get(adminRef);
+
+                if (snapshot.exists()) {
+                    cardSetup.style.display = 'none';
+                    cardLogin.style.display = 'block';
+                } else {
+                    cardLogin.style.display = 'none';
+                    cardSetup.style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Database rule restriction fault block:", error);
+                showLoginError("Connection Error. Verify Realtime Database rules match public permissions.");
+                cardLogin.style.display = 'block';
+            }
+        }
+
+        // Form Action 1: Provision Primary User Record Account directly into Firebase
+        document.getElementById('form-setup').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            setupMsg.style.display = 'none';
+            document.getElementById('btn-setup-text').innerText = 'PROVISIONING ACCOUNT...';
+
+            const userVal = document.getElementById('setup-username').value.trim();
+            const passVal = document.getElementById('setup-password').value.trim();
+
+            try {
+                await set(ref(db, 'users/admin'), {
+                    username: userVal,
+                    password: passVal,
+                    role: "admin",
+                    createdTime: Date.now()
+                });
+
+                setupMsg.className = "status-message success";
+                setupMsg.innerText = "Admin created successfully! Loading panel details...";
+                setupMsg.style.display = 'block';
+
+                setTimeout(() => {
+                    auditDatabaseConfiguration();
+                }, 1500);
+
+            } catch (error) {
+                setupMsg.className = "status-message error";
+                setupMsg.innerText = "Write Blocked. Set read and write keys to true in Firebase rules.";
+                setupMsg.style.display = 'block';
+                document.getElementById('btn-setup-text').innerText = 'SAVE ADMIN INITIALS';
+            }
+        });
+
+        // Form Action 2: Authenticate Session Credentials from Stored Reference Object
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginMsg.style.display = 'none';
+            document.getElementById('btn-login-text').innerText = 'VERIFYING SYSTEM KEYS...';
+
+            const userVal = document.getElementById('login-username').value.trim();
+            const passVal = document.getElementById('login-password').value.trim();
+
+            try {
+                const adminRef = ref(db, 'users/admin');
+                const snapshot = await get(adminRef);
+
+                if (snapshot.exists()) {
+                    const dbData = snapshot.val();
+                    
+                    if (userVal === dbData.username && passVal === dbData.password) {
+                        // Unlocks the storage matrix cleanly so admin doesn't have to re-auth
+                        localStorage.setItem('kogan_admin_authenticated', 'true');
+                        grantAccessToDashboard();
+                    } else {
+                        showLoginError("Invalid Admin Username or Security Password.");
+                    }
+                } else {
+                    showLoginError("No administrator account exists. Please reload to trigger setup setup.");
+                }
+            } catch (error) {
+                showLoginError("Database response timeline timeout error.");
+            }
+        });
+
+        function showLoginError(msg) {
+            loginMsg.innerText = msg;
+            loginMsg.style.display = 'block';
+            document.getElementById('btn-login-text').innerText = 'LOG IN';
+            document.getElementById('login-password').value = '';
+        }
+
+        // Grant Dashboard entry point access and begin live synchronization mapping listeners
+        function grantAccessToDashboard() {
+            authOverlay.style.display = 'none';
+            adminPanel.style.display = 'block';
+            streamLiveAnalyticsData();
+        }
+
+        // Realtime Data Streaming Hub Functionality Mapping Hook
+        function streamLiveAnalyticsData() {
+            const analyticsRef = ref(db, 'analytics');
+            
+            onValue(analyticsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    
+                    // Pull parameters dynamically, default cleanly to 0 if nodes don't exist yet
+                    document.getElementById('stat-today-revenue').innerText = data.todayRevenue ? `$${data.todayRevenue.toFixed(2)}` : '$0.00';
+                    document.getElementById('stat-month-revenue').innerText = data.monthRevenue ? `$${data.monthRevenue.toFixed(2)}` : '$0.00';
+                    document.getElementById('stat-total-sales').innerText = data.totalSales || '0';
+                    document.getElementById('stat-sellers-count').innerText = data.sellersRegistered || '0';
+                }
+            });
+        }
+
+        // Session Expiration Terminal Kill-Switch Hook
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            localStorage.removeItem('kogan_admin_authenticated');
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
