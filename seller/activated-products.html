@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kogan | Activated Products</title>
+    
+    <!-- Premium Geometric Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Ultra VIP Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #030306;
+            --glass-surface: rgba(13, 13, 20, 0.45);
+            --glass-card: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-border-light: rgba(255, 255, 255, 0.12);
+            
+            /* VIP 3D Gradients */
+            --glow-gold: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
+            --glow-cyan: linear-gradient(135deg, #00F2FE 0%, #4FACFE 100%);
+            --glow-neon: linear-gradient(135deg, #7F00FF 0%, #E100FF 100%);
+            --text-gradient: linear-gradient(180deg, #FFFFFF 0%, #A0A0B5 100%);
+            
+            --text-main: #FFFFFF;
+            --text-muted: #7E7E96;
+            --shadow-3d: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 3D Kinetic Light Fields */
+        .ambient-field { position: absolute; border-radius: 50%; filter: blur(140px); z-index: -1; opacity: 0.45; animation: orbit 25s infinite alternate ease-in-out; }
+        .field-gold { width: 500px; height: 500px; background: radial-gradient(circle, #FFA751 0%, transparent 70%); top: -150px; right: -100px; }
+        .field-purple { width: 600px; height: 600px; background: radial-gradient(circle, #7F00FF 0%, transparent 70%); bottom: -200px; left: -150px; animation-delay: -10s; }
+
+        @keyframes orbit {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            100% { transform: translate(60px, 40px) scale(1.15) rotate(360deg); }
+        }
+
+        /* Persistent Premium Sidebar */
+        .sidebar {
+            width: 290px;
+            background: var(--glass-surface);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-right: 1px solid var(--glass-border);
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .brand-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 50px; padding-left: 12px; }
+        .brand-logo-cube { width: 32px; height: 32px; background: var(--glow-cyan); border-radius: 8px; transform: rotate(45deg); box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+        .brand-name { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; background: var(--glow-cyan); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .nav-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        
+        .nav-link {
+            text-decoration: none;
+            padding: 16px 20px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            border: 1px solid transparent;
+        }
+
+        .nav-link i { font-size: 20px; transition: transform 0.3s ease; }
+        .nav-link:hover { color: var(--text-main); background: rgba(255, 255, 255, 0.02); border-color: var(--glass-border); }
+        .nav-link:hover i { transform: translateX(3px); }
+        
+        .nav-link.active {
+            color: var(--text-main);
+            background: var(--glass-card);
+            border-top: 1px solid var(--glass-border-light);
+            border-left: 1px solid var(--glass-border-light);
+            border-right: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-3d);
+        }
+        .nav-link.active i { color: #00F2FE; }
+
+        /* Structural Layout Matrix */
+        .app-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        
+        .header-bar {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 48px;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(3, 3, 6, 0.3);
+            backdrop-filter: blur(15px);
+            z-index: 90;
+        }
+
+        .menu-trigger { display: none; background: none; border: none; color: white; font-size: 26px; cursor: pointer; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 95; }
+
+        .profile-cluster { display: flex; align-items: center; gap: 16px; cursor: pointer; }
+        .profile-badge-3d {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            background: var(--glow-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            box-shadow: 0 8px 20px rgba(0, 242, 254, 0.2);
+            border-top: 1px solid rgba(255,255,255,0.4);
+        }
+
+        .stage-view { flex: 1; padding: 48px; overflow-y: auto; scroll-behavior: smooth; }
+
+        /* Premium 3D Glass Cards */
+        .vip-matrix { display: grid; grid-template-columns: repeat(12, 1fr); gap: 28px; margin-bottom: 36px; }
+        
+        .vip-card {
+            background: var(--glass-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid var(--glass-border-light);
+            border-left: 1px solid var(--glass-border-light);
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: var(--shadow-3d);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* Top Summary Statistics Layout */
+        .metric-card { grid-column: span 3; position: relative; overflow: hidden; }
+        .metric-label { color: var(--text-muted); font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .metric-label i { font-size: 18px; color: var(--text-muted); }
+        .metric-val { font-size: 32px; font-weight: 800; letter-spacing: -1px; background: var(--text-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .metric-val.accentuated { background: var(--glow-cyan); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Product Cards Grid Infrastructure */
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 32px; }
+        .product-vip-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+        
+        .card-media-wrapper { width: 100%; height: 210px; position: relative; background: rgba(255,255,255,0.01); border-bottom: 1px solid var(--glass-border); }
+        .card-thumb { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .product-vip-card:hover .card-thumb { transform: scale(1.04); }
+
+        .status-badge { position: absolute; top: 18px; right: 18px; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .badge-instock { background: rgba(0, 242, 254, 0.15); border: 1px solid rgba(0, 242, 254, 0.3); color: #00F2FE; }
+        .badge-nostock { background: rgba(255, 85, 85, 0.15); border: 1px solid rgba(255, 85, 85, 0.3); color: #ff5555; }
+        
+        .plan-badge { position: absolute; top: 18px; left: 18px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid var(--glass-border-light); color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+
+        .card-core-payload { padding: 28px; flex: 1; display: flex; flex-direction: column; }
+        .product-meta-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; color: var(--text-main); }
+        .product-meta-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Premium Value Tags & Analytics Inside Cards */
+        .pricing-tier-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .price-stack { display: flex; flex-direction: column; }
+        .price-label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+        .actual-val { font-size: 20px; font-weight: 800; color: #fff; }
+        .slash-val { font-size: 14px; color: var(--text-muted); text-decoration: line-through; margin-left: 6px; font-weight: 500; }
+        .commission-stack { text-align: right; }
+        .commission-val { font-size: 22px; font-weight: 800; background: var(--glow-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Integrated Card Micro Analytics */
+        .card-micro-analytics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; background: rgba(0,0,0,0.15); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.02); }
+        .micro-item { text-align: center; }
+        .micro-lbl { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+        .micro-num { font-size: 15px; font-weight: 700; color: #fff; }
+
+        /* Premium Hyperlink Asset Area */
+        .referral-asset-box { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+        .referral-input-container { position: relative; display: flex; background: rgba(0,0,0,0.25); border: 1px solid var(--glass-border); border-radius: 14px; overflow: hidden; padding: 4px; }
+        .referral-url-string { flex: 1; background: transparent; border: none; color: #A0A0B5; font-size: 13px; font-weight: 500; padding: 10px 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+        .copy-trigger-btn { background: var(--glass-surface); border: 1px solid var(--glass-border-light); color: #fff; width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
+        .copy-trigger-btn:hover { background: #00F2FE; color: #030306; box-shadow: 0 0 15px rgba(0,242,254,0.4); border-color: transparent; }
+
+        .activation-timestamp-footer { font-size: 11px; color: var(--text-muted); font-weight: 600; display: flex; align-items: center; gap: 6px; margin-top: 16px; }
+
+        /* Empty State Structural View */
+        .empty-matrix-canvas { grid-column: span 12; text-align: center; padding: 80px 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .empty-icon-shield { width: 80px; height: 80px; border-radius: 24px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--text-muted); margin-bottom: 24px; box-shadow: var(--shadow-3d); }
+        .empty-heading { font-size: 24px; font-weight: 800; margin-bottom: 12px; background: var(--text-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .empty-subtext { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; max-width: 440px; line-height: 1.6; }
+        
+        .premium-cta-btn { text-decoration: none; display: inline-flex; align-items: center; gap: 10px; background: var(--glow-cyan); color: #030306; font-weight: 700; padding: 14px 28px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,242,254,0.3); transition: transform 0.3s ease, box-shadow 0.3s ease; border-top: 1px solid rgba(255,255,255,0.3); }
+        .premium-cta-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,242,254,0.5); }
+
+        /* System Action Utilities */
+        .loader-backdrop { display: flex; justify-content: center; align-items: center; padding: 80px 0; grid-column: span 12; width: 100%; }
+        .spinner-3d { border: 3px solid rgba(255,255,255,0.03); border-top: 3px solid #00F2FE; border-radius: 50%; width: 48px; height: 48px; animation: cycle 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes cycle { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .logout-btn { background: rgba(255, 50, 50, 0.1); border: 1px solid rgba(255, 50, 50, 0.3); color: #ff5555; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
+        .logout-btn:hover { background: rgba(255, 50, 50, 0.2); }
+
+        /* Ultra VIP Custom Toast System */
+        .toast-notification-center { position: fixed; bottom: 32px; right: 32px; z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
+        .toast-capsule { background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(0, 242, 254, 0.3); border-top: 1px solid rgba(255,255,255,0.15); padding: 16px 24px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 20px rgba(0,242,254,0.1); display: flex; align-items: center; gap: 12px; color: #fff; font-size: 14px; font-weight: 600; transform: translateY(40px); opacity: 0; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideIn { to { transform: translateY(0); opacity: 1; } }
+
+        /* Responsive Breakpoint Matrix */
+        @media (max-width: 1400px) { .metric-card { grid-column: span 6; } }
+        @media (max-width: 992px) { .products-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -290px; height: 100%; }
+            .sidebar.visible { transform: translateX(290px); }
+            .sidebar-overlay.visible { display: block; }
+            .menu-trigger { display: block; }
+            .metric-card { grid-column: span 12; }
+            .products-grid { grid-template-columns: 1fr; }
+            .header-bar { padding: 0 24px; }
+            .stage-view { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECURE AUTHENTICATION GUARD -->
+    <script>
+        const currentAuthenticatedUser = localStorage.getItem('seller_id');
+        if (!currentAuthenticatedUser) { window.location.href = 'auth.html'; }
+    </script>
+
+    <!-- Background Ambience Fields -->
+    <div class="ambient-field field-gold"></div>
+    <div class="ambient-field field-purple"></div>
+
+    <!-- Mobile Navigation Click Overlay Backdrop -->
+    <div class="sidebar-overlay" id="sidebar-overlay-node" onclick="toggleSidebarView()"></div>
+
+    <!-- Direct Navigation Sidebar Shell -->
+    <nav class="sidebar" id="sidebar-node">
+        <div class="brand-meta">
+            <div class="brand-logo-cube"></div>
+            <span class="brand-name">Kogan</span>
+        </div>
+        <ul class="nav-list">
+            <a href="dashboard.html" class="nav-link"><i class="ri-dashboard-3-line"></i> Dashboard</a>
+            <a href="analytics.html" class="nav-link"><i class="ri-bar-chart-box-line"></i> Analytics</a>
+            <a href="activated-products.html" class="nav-link"><i class="ri-shopping-bag-3-line"></i> Activated Products</a>
+            <a href="add-products.html" class="nav-link"><i class="ri-add-circle-line"></i> Add New Product</a>
+            <a href="plans.html" class="nav-link"><i class="ri-vip-diamond-line"></i> Plans</a>
+            <a href="kyc.html" class="nav-link"><i class="ri-shield-check-line"></i> KYC</a>
+            <a href="withdraw.html" class="nav-link"><i class="ri-bank-card-line"></i> Withdraw</a>
+            <a href="support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+        </ul>
+    </nav>
+
+    <!-- App Viewport Container -->
+    <div class="app-container">
+        <header class="header-bar">
+            <button class="menu-trigger" onclick="toggleSidebarView()"><i class="ri-menu-2-line"></i></button>
+            <div style="flex: 1;"></div>
+            <div class="profile-cluster">
+                <div id="topbar-profile-target" style="display:flex; align-items:center; gap:16px;"></div>
+                <button class="logout-btn" onclick="logoutSystem()"><i class="ri-logout-box-line"></i> Logout</button>
+            </div>
+        </header>
+
+        <!-- Main Functional Content Stage -->
+        <main class="stage-view">
+            
+            <!-- Global Statistical Summary Bar Area -->
+            <div class="vip-matrix" id="metrics-summary-bar">
+                <!-- Inside will handle dynamic population from script pipeline -->
+            </div>
+
+            <!-- Products View Engine Output -->
+            <div class="products-grid" id="activated-products-root">
+                <div class="loader-backdrop"><div class="spinner-3d"></div></div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Floating System Toast Target Holder -->
+    <div class="toast-notification-center" id="toast-reservoir"></div>
+
+    <!-- Firebase System Module & Interface Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+            authDomain: "koganstoree.firebaseapp.com",
+            databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+            projectId: "koganstoree",
+            storageBucket: "koganstoree.firebasestorage.app",
+            messagingSenderId: "166010280262",
+            appId: "1:166010280262:web:a29c6fc7b8251c9997ed47",
+            measurementId: "G-C2WRS6MQV0"
+        };
+        
+        const firebaseApp = initializeApp(firebaseConfig);
+        const db = getDatabase(firebaseApp);
+
+        window.logoutSystem = function() {
+            localStorage.removeItem('seller_id');
+            window.location.href = 'auth.html';
+        };
+
+        window.toggleSidebarView = function() {
+            document.getElementById('sidebar-node').classList.toggle('visible');
+            document.getElementById('sidebar-overlay-node').classList.toggle('visible');
+        };
+
+        // Real-time clipboard operation with toast notification
+        window.secureLinkCopy = function(referralLinkString, buttonDomNode) {
+            if (!referralLinkString) return;
+            navigator.clipboard.writeText(referralLinkString).then(() => {
+                const toastReservoir = document.getElementById('toast-reservoir');
+                const toastCapsule = document.createElement('div');
+                toastCapsule.className = 'toast-capsule';
+                toastCapsule.innerHTML = `<i class="ri-checkbox-circle-fill" style="color: #00F2FE; font-size: 18px;"></i> Referral link copied successfully!`;
+                
+                toastReservoir.appendChild(toastCapsule);
+                
+                // Audio or Visual swap micro-reaction
+                const originalIcon = buttonDomNode.innerHTML;
+                buttonDomNode.innerHTML = `<i class="ri-check-line" style="color: #030306;"></i>`;
+                buttonDomNode.style.background = '#00F2FE';
+
+                setTimeout(() => {
+                    toastCapsule.style.opacity = '0';
+                    toastCapsule.style.transform = 'translateY(-20px)';
+                    toastCapsule.style.transition = 'all 0.4s ease';
+                    setTimeout(() => toastCapsule.remove(), 400);
+                    
+                    buttonDomNode.innerHTML = originalIcon;
+                    buttonDomNode.style.background = '';
+                }, 2500);
+            }).catch(err => console.error('Error standardizing clipboard write action:', err));
+        };
+
+        // Relational Engine Pipeline Fetching Across Collections
+        async function constructActivatedProductsPipeline() {
+            const productsContainer = document.getElementById('activated-products-root');
+            const metricsContainer = document.getElementById('metrics-summary-bar');
+
+            try {
+                // Fetch context metrics data targets
+                const [userSnap, activeProductsSnap] = await Promise.all([
+                    get(ref(db, `users/${currentAuthenticatedUser}`)),
+                    get(ref(db, `seller_activated_products/${currentAuthenticatedUser}`))
+                ]);
+
+                if (userSnap.exists()) {
+                    const userData = userSnap.val();
+                    document.getElementById('topbar-profile-target').innerHTML = `
+                        <span style="font-size: 14px; font-weight: 700; color: #FFFFFF;">${userData.name || 'Partner'}</span>
+                        <div class="profile-badge-3d">${(userData.name || 'P').charAt(0).toUpperCase()}</div>
+                    `;
+                }
+
+                // Initial empty state verification checks
+                if (!activeProductsSnap.exists()) {
+                    renderEmptyStateCanvas(metricsContainer, productsContainer);
+                    return;
+                }
+
+                const activatedProductsTree = activeProductsSnap.val();
+                const totalActivatedCount = Object.keys(activatedProductsTree).length;
+                
+                let combinedTotalEarnings = 0;
+                let simulatedTotalClicks = 0; 
+                let simulatedTotalOrders = 0;
+
+                let compiledCardsHTMLMatrix = '';
+
+                // Iterative resolution of products across database collection trees
+                for (const itemKey in activatedProductsTree) {
+                    const relationPayload = activatedProductsTree[itemKey];
+                    const productId = relationPayload.productId;
+
+                    // Fetch base system object tracking data
+                    const productNodeSnap = await get(ref(db, `products/${productId}`));
+                    
+                    if (productNodeSnap.exists()) {
+                        const productCoreDetails = productNodeSnap.val();
+
+                        // Accumulate real-time database metric updates
+                        const operationalProfit = parseFloat(relationPayload.profit || 0);
+                        combinedTotalEarnings += operationalProfit;
+
+                        // Mock/placeholder extraction fields for click and future transaction analytics metrics mapping
+                        const productClicksMock = relationPayload.totalClicks || 0; 
+                        const productOrdersMock = relationPayload.totalOrders || 0;
+                        simulatedTotalClicks += productClicksMock;
+                        simulatedTotalOrders += productOrdersMock;
+
+                        const dateFormatted = relationPayload.activatedAt ? new Date(relationPayload.activatedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
+                        const inStockStatus = (productCoreDetails.stock && parseInt(productCoreDetails.stock) > 0);
+
+                        compiledCardsHTMLMatrix += `
+                            <div class="vip-card product-vip-card">
+                                <div class="card-media-wrapper">
+                                    <img src="${productCoreDetails.image || 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=500&q=80'}" class="card-thumb" alt="Product Image Asset" />
+                                    <span class="plan-badge">${(relationPayload.plan || 'Standard').toUpperCase()}</span>
+                                    <span class="status-badge ${inStockStatus ? 'badge-instock' : 'badge-nostock'}">${inStockStatus ? 'In Stock' : 'Out of Stock'}</span>
+                                </div>
+                                <div class="card-core-payload">
+                                    <h3 class="product-meta-title">${productCoreDetails.title || 'Elite System Asset'}</h3>
+                                    <p class="product-meta-desc">${productCoreDetails.desc || 'Premium tier system processing interface asset module parameter settings details information.'}</p>
+                                    
+                                    <div class="pricing-tier-row">
+                                        <div class="price-stack">
+                                            <span class="price-label">Product Value</span>
+                                            <div>
+                                                <span class="actual-val">$${parseFloat(productCoreDetails.discountPrice || productCoreDetails.price || 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
+                                                ${productCoreDetails.discountPrice ? `<span class="slash-val">$${parseFloat(productCoreDetails.price).toLocaleString()}</span>` : ''}
+                                            </div>
+                                        </div>
+                                        <div class="commission-stack">
+                                            <span class="price-label">Your Profit</span>
+                                            <div class="commission-val">+$${operationalProfit.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Micro Analytics Block Elements Embedded Inside Product Cards -->
+                                    <div class="card-micro-analytics">
+                                        <div class="micro-item">
+                                            <div class="micro-lbl">Clicks</div>
+                                            <div class="micro-num">${productClicksMock}</div>
+                                        </div>
+                                        <div class="micro-item">
+                                            <div class="micro-lbl">Orders</div>
+                                            <div class="micro-num">${productOrdersMock}</div>
+                                        </div>
+                                        <div class="micro-item">
+                                            <div class="micro-lbl">Earnings</div>
+                                            <div class="micro-num" style="color: #FFE259;">$${operationalProfit.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="referral-asset-box">
+                                        <span class="price-label" style="letter-spacing:1px; font-size:10px;">Dynamic Referral Asset Link</span>
+                                        <div class="referral-input-container">
+                                            <div class="referral-url-string">${relationPayload.referralLink || 'No dynamic tracking URL structure generated.'}</div>
+                                            <button class="copy-trigger-btn" onclick="secureLinkCopy('${relationPayload.referralLink || ''}', this)">
+                                                <i class="ri-file-copy-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="activation-timestamp-footer">
+                                        <i class="ri-calendar-check-line" style="color:#00F2FE;"></i>
+                                        <span>Activated: ${dateFormatted}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+
+                // Render Summary Top Statistics Row Elements
+                metricsContainer.innerHTML = `
+                    <div class="vip-card metric-card">
+                        <div class="metric-label"><i class="ri-checkbox-multiple-line"></i> Activated Products</div>
+                        <div class="metric-val accentuated">${totalActivatedCount}</div>
+                    </div>
+                    <div class="vip-card metric-card">
+                        <div class="metric-label"><i class="ri-coins-line"></i> Referral Earnings</div>
+                        <div class="metric-val" style="background: var(--glow-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">$${combinedTotalEarnings.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+                    </div>
+                    <div class="vip-card metric-card">
+                        <div class="metric-label"><i class="ri-cursor-line"></i> Total Tracking Clicks</div>
+                        <div class="metric-val">${simulatedTotalClicks}</div>
+                    </div>
+                    <div class="vip-card metric-card">
+                        <div class="metric-label"><i class="ri-shopping-cart-2-line"></i> Total Conversion Orders</div>
+                        <div class="metric-val">${simulatedTotalOrders}</div>
+                    </div>
+                `;
+
+                // Set HTML content to container grid
+                productsContainer.innerHTML = compiledCardsHTMLMatrix || renderFallbackEmptyUIString();
+
+            } catch (err) {
+                console.error("Critical active state product runtime failure:", err);
+                productsContainer.innerHTML = `
+                    <div class="vip-card" style="grid-column: span 12; text-align: center; padding: 40px;">
+                        <i class="ri-error-warning-line" style="font-size: 40px; color: #ff5555; margin-bottom: 15px; display: block;"></i>
+                        <h3 style="color: #ff5555;">Cross-Collection Query Compilation Failed</h3>
+                        <p style="color: var(--text-muted); font-size: 13px; margin-top: 10px;">Trace Exception: ${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderEmptyStateCanvas(metricsContainer, productsContainer) {
+            metricsContainer.innerHTML = `
+                <div class="vip-card metric-card"><div class="metric-label"><i class="ri-checkbox-multiple-line"></i> Activated Products</div><div class="metric-val accentuated">0</div></div>
+                <div class="vip-card metric-card"><div class="metric-label"><i class="ri-coins-line"></i> Referral Earnings</div><div class="metric-val">$0.00</div></div>
+                <div class="vip-card metric-card"><div class="metric-label"><i class="ri-cursor-line"></i> Total Tracking Clicks</div><div class="metric-val">0</div></div>
+                <div class="vip-card metric-card"><div class="metric-label"><i class="ri-shopping-cart-2-line"></i> Total Conversion Orders</div><div class="metric-val">0</div></div>
+            `;
+            productsContainer.innerHTML = renderFallbackEmptyUIString();
+        }
+
+        function renderFallbackEmptyUIString() {
+            return `
+                <div class="vip-card empty-matrix-canvas">
+                    <div class="empty-icon-shield"><i class="ri-shopping-bag-3-line"></i></div>
+                    <h2 class="empty-heading">No Active Referral Engines Found</h2>
+                    <p class="empty-subtext">You have not initialized any affiliate product tracking links yet. Activate your first product to unlock dynamic optimization commissions pipelines.</p>
+                    <a href="add-products.html" class="premium-cta-btn"><i class="ri-add-line" style="font-size:18px; font-weight:800;"></i> Activate First Product</a>
+                </div>
+            `;
+        }
+
+        window.addEventListener('DOMContentLoaded', constructActivatedProductsPipeline);
+    </script>
+
+    <!-- AUTOMATIC PAGE-MATCHING ACTIVE LINK SCRIPT -->
+    <script>
+        const targetRouteFile = window.location.pathname.split("/").pop();
+        document.querySelectorAll('.nav-link').forEach(linkNode => {
+            if (linkNode.getAttribute('href') === targetRouteFile) {
+                linkNode.classList.add('active');
+            } else {
+                linkNode.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

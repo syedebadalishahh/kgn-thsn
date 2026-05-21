@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kogan | Elite Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #030305; --glass: rgba(255, 255, 255, 0.03); --gold: #d4af37; --neon: #00ffcc; --border: rgba(255, 255, 255, 0.1); }
+        body { margin: 0; background: #030305; background-image: radial-gradient(circle at 80% 20%, #2a2200 0%, transparent 40%), radial-gradient(circle at 20% 80%, #00332a 0%, transparent 40%); color: white; font-family: 'Plus Jakarta Sans', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .auth-container { width: 100%; max-width: 420px; padding: 40px; background: var(--glass); backdrop-filter: blur(30px); border: 1px solid var(--border); border-radius: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
+        h2 { font-size: 32px; margin-bottom: 20px; text-align: center; color: var(--gold); }
+        .info-bar { background: rgba(212, 175, 55, 0.05); border: 1px solid var(--gold); border-radius: 12px; padding: 12px; font-size: 11px; color: var(--gold); margin-bottom: 20px; text-align: center; }
+        input { width: 100%; padding: 15px; margin: 8px 0; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 15px; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 16px; background: var(--gold); border: none; border-radius: 15px; color: black; font-weight: 800; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        button:hover { transform: scale(1.02); opacity: 0.9; }
+        .toggle-btn { text-align: center; margin-top: 20px; font-size: 13px; color: #666; }
+        .toggle-btn span { color: var(--neon); cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <h2 id="title">Seller Login</h2>
+    
+    <div id="signup-fields" style="display:none;">
+        <div class="info-bar">⚠️ SIGNING UP AS A VERIFIED SELLER</div>
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="text" id="username-reg" placeholder="Choose Username">
+        <input type="email" id="email" placeholder="Email Address">
+    </div>
+
+    <div id="login-fields">
+        <input type="text" id="login-username" placeholder="Username">
+    </div>
+    
+    <input type="password" id="password" placeholder="Password">
+    
+    <button id="main-btn">LOGIN TO PORTAL</button>
+    <div class="toggle-btn" id="toggle-text">New here? <span id="toggle-link">Create Seller Account</span></div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+        authDomain: "koganstoree.firebaseapp.com",
+        databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+        projectId: "koganstoree",
+        storageBucket: "koganstoree.firebasestorage.app",
+        messagingSenderId: "166010280262",
+        appId: "1:166010280262:web:a29c6fc7b8251c9997ed47",
+        measurementId: "G-C2WRS6MQV0"
+    };
+
+    const db = getDatabase(initializeApp(firebaseConfig));
+    let isLogin = true;
+
+    // Toggle Logic
+    const toggleLink = document.getElementById('toggle-link');
+    toggleLink.addEventListener('click', () => {
+        isLogin = !isLogin;
+        document.getElementById('title').innerText = isLogin ? 'Seller Login' : 'Seller Sign Up';
+        document.getElementById('main-btn').innerText = isLogin ? 'LOGIN TO PORTAL' : 'COMPLETE REGISTRATION';
+        document.getElementById('signup-fields').style.display = isLogin ? 'none' : 'block';
+        document.getElementById('login-fields').style.display = isLogin ? 'block' : 'none';
+        document.getElementById('toggle-text').innerHTML = isLogin ? 
+            "New here? <span id='toggle-link'>Create Seller Account</span>" : 
+            "Already a member? <span id='toggle-link'>Login</span>";
+        // Re-attach listener
+        document.getElementById('toggle-link').addEventListener('click', () => location.reload());
+    });
+
+    // Auth Logic
+    document.getElementById('main-btn').addEventListener('click', async () => {
+        if (!isLogin) {
+            const username = document.getElementById('username-reg').value;
+            if(!username || !document.getElementById('password').value) return alert("Fill all fields");
+
+            await set(ref(db, 'users/' + username), {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                plan: "Silver", 
+                balance: 0,
+                totalSales: 0
+            });
+            alert("Registration successful!");
+            location.reload();
+        } else {
+            const userIn = document.getElementById('login-username').value;
+            const passIn = document.getElementById('password').value;
+            
+            const snapshot = await get(ref(db, 'users/' + userIn));
+            
+            if (snapshot.exists() && snapshot.val().password === passIn) {
+                // SUCCESS: Save the username as the identifier
+                localStorage.setItem('seller_id', userIn);
+                window.location.href = 'dashboard.html';
+            } else {
+                alert("Invalid Username or Password");
+            }
+        }
+    });
+</script>
+</body>
+</html>
