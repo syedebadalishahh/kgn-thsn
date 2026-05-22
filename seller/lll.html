@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kogan | Activated Products</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+    <style>
+
+        :root {
+            --bg-deep: #030306;
+            --glass-surface: rgba(13, 13, 20, 0.45);
+            --glass-card: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-border-light: rgba(255, 255, 255, 0.12);
+
+            --glow-gold: linear-gradient(135deg, #FFE259 0%, #FFA751 100%);
+            --glow-cyan: linear-gradient(135deg, #00F2FE 0%, #4FACFE 100%);
+            --glow-neon: linear-gradient(135deg, #7F00FF 0%, #E100FF 100%);
+            --text-gradient: linear-gradient(180deg, #FFFFFF 0%, #A0A0B5 100%);
+
+            --text-main: #FFFFFF;
+            --text-muted: #7E7E96;
+
+            --shadow-3d:
+                0 20px 50px rgba(0, 0, 0, 0.6),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Plus Jakarta Sans', sans-serif;
+        }
+
+        body{
+            background-color:var(--bg-deep);
+            color:var(--text-main);
+            display:flex;
+            height:100vh;
+            overflow:hidden;
+            position:relative;
+        }
+
+        .ambient-field{
+            position:absolute;
+            border-radius:50%;
+            filter:blur(140px);
+            z-index:-1;
+            opacity:.45;
+            animation:orbit 25s infinite alternate ease-in-out;
+        }
+
+        .field-gold{
+            width:500px;
+            height:500px;
+            background: radial-gradient(circle, #FFA751 0%, transparent 70%);
+            top:-150px;
+            right:-100px;
+        }
+
+        .field-purple{
+            width:600px;
+            height:600px;
+            background: radial-gradient(circle, #7F00FF 0%, transparent 70%);
+            bottom:-200px;
+            left:-150px;
+            animation-delay:-10s;
+        }
+
+        @keyframes orbit{
+            0%{
+                transform:translate(0,0) scale(1) rotate(0deg);
+            }
+            100%{
+                transform:translate(60px,40px) scale(1.15) rotate(360deg);
+            }
+        }
+
+        .sidebar{
+            width:290px;
+            background:var(--glass-surface);
+            backdrop-filter:blur(30px);
+            border-right:1px solid var(--glass-border);
+            padding:40px 24px;
+            display:flex;
+            flex-direction:column;
+            z-index:100;
+            transition:transform .4s cubic-bezier(0.16,1,0.3,1);
+        }
+
+        .brand-meta{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:50px;
+            padding-left:12px;
+        }
+
+        .brand-logo-cube{
+            width:32px;
+            height:32px;
+            background:var(--glow-cyan);
+            border-radius:8px;
+            transform:rotate(45deg);
+        }
+
+        .brand-name{
+            font-size:22px;
+            font-weight:800;
+            background:var(--glow-cyan);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .nav-list{
+            list-style:none;
+            display:flex;
+            flex-direction:column;
+            gap:6px;
+        }
+
+        .nav-link{
+            text-decoration:none;
+            padding:16px 20px;
+            border-radius:16px;
+            display:flex;
+            align-items:center;
+            gap:16px;
+            font-size:15px;
+            font-weight:600;
+            color:var(--text-muted);
+            transition:.3s;
+            border:1px solid transparent;
+        }
+
+        .nav-link i{
+            font-size:20px;
+        }
+
+        .nav-link:hover{
+            color:#fff;
+            background:rgba(255,255,255,0.02);
+            border-color:var(--glass-border);
+        }
+
+        .nav-link.active{
+            color:#fff;
+            background:var(--glass-card);
+            border-top:1px solid var(--glass-border-light);
+            border-left:1px solid var(--glass-border-light);
+            border-right:1px solid var(--glass-border);
+            border-bottom:1px solid var(--glass-border);
+            box-shadow:var(--shadow-3d);
+        }
+
+        .nav-link.active i{
+            color:#00F2FE;
+        }
+
+        .app-container{
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        }
+
+        .header-bar{
+            height:90px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 48px;
+            border-bottom:1px solid var(--glass-border);
+            background:rgba(3,3,6,0.3);
+            backdrop-filter:blur(15px);
+        }
+
+        .menu-trigger{
+            display:none;
+            background:none;
+            border:none;
+            color:white;
+            font-size:26px;
+            cursor:pointer;
+        }
+
+        .sidebar-overlay{
+            display:none;
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.6);
+            z-index:95;
+        }
+
+        .profile-cluster{
+            display:flex;
+            align-items:center;
+            gap:16px;
+        }
+
+        .stage-view{
+            flex:1;
+            padding:48px;
+            overflow-y:auto;
+        }
+
+        .vip-matrix{
+            display:grid;
+            grid-template-columns:repeat(12,1fr);
+            gap:28px;
+            margin-bottom:36px;
+        }
+
+        .vip-card{
+            background:var(--glass-card);
+            backdrop-filter:blur(20px);
+            border:1px solid var(--glass-border);
+            border-top:1px solid var(--glass-border-light);
+            border-left:1px solid var(--glass-border-light);
+            border-radius:28px;
+            box-shadow:var(--shadow-3d);
+        }
+
+        .metric-card{
+            grid-column:span 3;
+            padding:32px;
+        }
+
+        .metric-label{
+            color:var(--text-muted);
+            font-size:14px;
+            font-weight:600;
+            margin-bottom:12px;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .metric-val{
+            font-size:32px;
+            font-weight:800;
+        }
+
+        .accentuated{
+            background:var(--glow-cyan);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .products-grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fill,minmax(360px,1fr));
+            gap:32px;
+        }
+
+        .product-vip-card{
+            overflow:hidden;
+            display:flex;
+            flex-direction:column;
+        }
+
+        .card-media-wrapper{
+            width:100%;
+            height:240px;
+            position:relative;
+            overflow:hidden;
+            border-bottom:1px solid var(--glass-border);
+        }
+
+        .card-thumb{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            transition:.5s;
+        }
+
+        .product-vip-card:hover .card-thumb{
+            transform:scale(1.06);
+        }
+
+        .plan-badge{
+            position:absolute;
+            top:18px;
+            left:18px;
+            padding:7px 14px;
+            border-radius:14px;
+            background:rgba(0,0,0,0.4);
+            border:1px solid rgba(255,255,255,0.2);
+            backdrop-filter:blur(10px);
+            font-size:11px;
+            font-weight:700;
+        }
+
+        .status-badge{
+            position:absolute;
+            top:18px;
+            right:18px;
+            padding:7px 14px;
+            border-radius:14px;
+            font-size:11px;
+            font-weight:700;
+        }
+
+        .badge-instock{
+            background:rgba(0,242,254,0.15);
+            color:#00F2FE;
+            border:1px solid rgba(0,242,254,0.3);
+        }
+
+        .badge-nostock{
+            background:rgba(255,85,85,0.15);
+            color:#ff5555;
+            border:1px solid rgba(255,85,85,0.3);
+        }
+
+        .card-core-payload{
+            padding:28px;
+            display:flex;
+            flex-direction:column;
+            flex:1;
+        }
+
+        .product-meta-title{
+            font-size:22px;
+            font-weight:800;
+            margin-bottom:10px;
+        }
+
+        .product-meta-desc{
+            color:var(--text-muted);
+            font-size:14px;
+            line-height:1.6;
+            margin-bottom:22px;
+        }
+
+        .pricing-tier-row{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:20px;
+        }
+
+        .actual-val{
+            font-size:24px;
+            font-weight:800;
+        }
+
+        .commission-val{
+            font-size:22px;
+            font-weight:800;
+            background:var(--glow-gold);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .card-micro-analytics{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:12px;
+            margin-bottom:24px;
+            background:rgba(255,255,255,0.02);
+            padding:14px;
+            border-radius:18px;
+        }
+
+        .micro-item{
+            text-align:center;
+        }
+
+        .micro-lbl{
+            font-size:10px;
+            color:var(--text-muted);
+            margin-bottom:6px;
+            text-transform:uppercase;
+        }
+
+        .micro-num{
+            font-size:16px;
+            font-weight:700;
+        }
+
+        .referral-asset-box{
+            margin-top:auto;
+        }
+
+        .referral-input-container{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            background:rgba(0,0,0,0.25);
+            border:1px solid var(--glass-border);
+            border-radius:18px;
+            padding:10px;
+        }
+
+        .referral-url-string{
+            flex:1;
+            background:transparent;
+            border:none;
+            outline:none;
+            color:#A0A0B5;
+            font-size:13px;
+        }
+
+        .copy-trigger-btn{
+            width:42px;
+            height:42px;
+            border:none;
+            border-radius:12px;
+            background:var(--glow-cyan);
+            color:#030306;
+            cursor:pointer;
+            font-size:18px;
+            font-weight:700;
+        }
+
+        .activation-timestamp-footer{
+            margin-top:18px;
+            color:var(--text-muted);
+            font-size:12px;
+        }
+
+        .loader-backdrop{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:80px 0;
+            grid-column:span 12;
+        }
+
+        .spinner-3d{
+            border:3px solid rgba(255,255,255,0.05);
+            border-top:3px solid #00F2FE;
+            border-radius:50%;
+            width:48px;
+            height:48px;
+            animation:spin .8s linear infinite;
+        }
+
+        @keyframes spin{
+            100%{
+                transform:rotate(360deg);
+            }
+        }
+
+        .logout-btn{
+            background:rgba(255,50,50,0.1);
+            border:1px solid rgba(255,50,50,0.3);
+            color:#ff5555;
+            padding:10px 20px;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:600;
+            display:flex;
+            align-items:center;
+            gap:8px;
+        }
+
+        .toast-notification-center{
+            position:fixed;
+            bottom:32px;
+            right:32px;
+            z-index:9999;
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .toast-capsule{
+            background:rgba(10,10,15,0.9);
+            border:1px solid rgba(0,242,254,0.2);
+            padding:16px 22px;
+            border-radius:16px;
+            color:white;
+            display:flex;
+            align-items:center;
+            gap:12px;
+            animation:slideIn .4s ease forwards;
+        }
+
+        @keyframes slideIn{
+            from{
+                transform:translateY(40px);
+                opacity:0;
+            }
+            to{
+                transform:translateY(0);
+                opacity:1;
+            }
+        }
+
+        @media(max-width:1400px){
+            .metric-card{
+                grid-column:span 6;
+            }
+        }
+
+        @media(max-width:992px){
+            .products-grid{
+                grid-template-columns:1fr 1fr;
+            }
+        }
+
+        @media(max-width:768px){
+
+            .sidebar{
+                position:fixed;
+                left:-290px;
+                height:100%;
+            }
+
+            .sidebar.visible{
+                transform:translateX(290px);
+            }
+
+            .sidebar-overlay.visible{
+                display:block;
+            }
+
+            .menu-trigger{
+                display:block;
+            }
+
+            .metric-card{
+                grid-column:span 12;
+            }
+
+            .products-grid{
+                grid-template-columns:1fr;
+            }
+
+            .header-bar{
+                padding:0 24px;
+            }
+
+            .stage-view{
+                padding:24px;
+            }
+
+        }
+
+    </style>
+</head>
+<body>
+
+<script>
+const currentAuthenticatedUser = localStorage.getItem('seller_id');
+
+if(!currentAuthenticatedUser){
+    window.location.href = 'auth.html';
+}
+</script>
+
+<div class="ambient-field field-gold"></div>
+<div class="ambient-field field-purple"></div>
+
+<div class="sidebar-overlay" id="sidebar-overlay-node" onclick="toggleSidebarView()"></div>
+
+<nav class="sidebar" id="sidebar-node">
+
+    <div class="brand-meta">
+        <div class="brand-logo-cube"></div>
+        <span class="brand-name">Kogan</span>
+    </div>
+
+    <ul class="nav-list">
+        <a href="dashboard.html" class="nav-link"><i class="ri-dashboard-3-line"></i> Dashboard</a>
+        <a href="analytics.html" class="nav-link"><i class="ri-bar-chart-box-line"></i> Analytics</a>
+        <a href="activated-products.html" class="nav-link"><i class="ri-shopping-bag-3-line"></i> Activated Products</a>
+        <a href="add-products.html" class="nav-link"><i class="ri-add-circle-line"></i> Add New Product</a>
+        <a href="plans.html" class="nav-link"><i class="ri-vip-diamond-line"></i> Plans</a>
+        <a href="kyc.html" class="nav-link"><i class="ri-shield-check-line"></i> KYC</a>
+        <a href="withdraw.html" class="nav-link"><i class="ri-bank-card-line"></i> Withdraw</a>
+        <a href="support.html" class="nav-link"><i class="ri-customer-service-2-line"></i> Support</a>
+    </ul>
+
+</nav>
+
+<div class="app-container">
+
+    <header class="header-bar">
+
+        <button class="menu-trigger" onclick="toggleSidebarView()">
+            <i class="ri-menu-2-line"></i>
+        </button>
+
+        <div style="flex:1;"></div>
+
+        <div class="profile-cluster">
+
+            <button class="logout-btn" onclick="logoutSystem()">
+                <i class="ri-logout-box-line"></i>
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+    <main class="stage-view">
+
+        <div class="vip-matrix" id="metrics-summary-bar"></div>
+
+        <div class="products-grid" id="activated-products-root">
+
+            <div class="loader-backdrop">
+                <div class="spinner-3d"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<div class="toast-notification-center" id="toast-reservoir"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBfNKnkuPjWCO-KnqvZrfmrbfC44K0xOY8",
+    authDomain: "koganstoree.firebaseapp.com",
+    databaseURL: "https://koganstoree-default-rtdb.firebaseio.com",
+    projectId: "koganstoree",
+    storageBucket: "koganstoree.firebasestorage.app",
+    messagingSenderId: "166010280262",
+    appId: "1:166010280262:web:a29c6fc7b8251c9997ed47"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const userId = localStorage.getItem("seller_id");
+
+let masterList = [];
+
+/* =========================
+   REALTIME ENGINE
+========================= */
+
+function start() {
+
+    const activatedRef = ref(db, `seller_activated_products/${userId}`);
+    const ordersRef = ref(db, `orders`);
+    const productsRef = ref(db, `products`);
+    const plansRef = ref(db, `plans_config`);
+
+    onValue(activatedRef, (aSnap) => {
+
+        onValue(ordersRef, (oSnap) => {
+
+            onValue(productsRef, (pSnap) => {
+
+                onValue(plansRef, (planSnap) => {
+
+                    const activated = aSnap.val() || {};
+                    const orders = Object.values(oSnap.val() || {});
+                    const products = pSnap.val() || {};
+                    const plans = planSnap.val() || {};
+
+                    let totalEarnings = 0;
+                    let totalOrders = 0;
+
+                    masterList = [];
+
+                    Object.keys(activated).forEach(key => {
+
+                        const item = activated[key];
+                        const product = products[item.productId];
+
+                        // Skip if the product was deleted/missing to avoid undefined boxes
+                        if (!product) return; 
+
+                        const price = parseFloat(product.price || 0);
+                        const planName = item.plan || "";
+
+                        // Bi-directional commission rate lookup
+                        let commissionPercent = 0;
+                        if (plans && planName) {
+                            const normalizedPlan = planName.toLowerCase().trim();
+
+                            const planKey = Object.keys(plans).find(k => {
+                                const normalizedKey = k.toLowerCase().trim();
+                                return normalizedKey.includes(normalizedPlan) || 
+                                       normalizedPlan.includes(normalizedKey) ||
+                                       normalizedKey.includes(normalizedPlan.split(" ")[0]);
+                            });
+
+                            if (planKey) {
+                                commissionPercent = parseFloat(plans[planKey].commissionRate || 0);
+                            }
+                        }
+
+                        const myOrders = orders.filter(o =>
+                            o.ref === userId &&
+                            o.productId === item.productId &&
+                            o.status === "delivered"
+                        );
+
+                        const orderCount = myOrders.length;
+
+                        // RELATIVE PROFIT CALCULATION
+                        const profitPerOrder = (price * commissionPercent) / 100;
+                        const totalProfit = profitPerOrder * orderCount;
+
+                        totalEarnings += totalProfit;
+                        totalOrders += orderCount;
+
+                        masterList.push({
+                            title: product.title,
+                            image: product.image,
+                            price,
+                            orderCount,
+                            profitPerOrder,
+                            profit: totalProfit,
+                            commissionPercent,
+                            liveUrl: `${location.origin}/product.html?id=${item.productId}&ref=${userId}`
+                        });
+                    });
+
+                    renderMetrics(totalEarnings, totalOrders, masterList.length);
+                    renderProducts(masterList);
+
+                });
+
+            });
+
+        });
+
+    });
+
+}
+
+/* =========================
+   METRICS
+========================= */
+
+function renderMetrics(earnings, orders, active) {
+
+    document.getElementById("metrics-summary-bar").innerHTML = `
+        <div class="vip-card metric-card">
+            <div class="metric-label">Activated Products</div>
+            <div class="metric-val">${active}</div>
+        </div>
+
+        <div class="vip-card metric-card">
+            <div class="metric-label">Total Orders</div>
+            <div class="metric-val">${orders}</div>
+        </div>
+
+    `;
+}
+
+/* =========================
+   PRODUCTS UI (CLEAN)
+========================= */
+
+function renderProducts(list) {
+
+    const box = document.getElementById("activated-products-root");
+
+    if (!list.length) {
+        box.innerHTML = `<div class="vip-card" style="padding:40px;text-align:center;">No Products</div>`;
+        return;
+    }
+
+    box.innerHTML = list.map(p => `
+        <div class="vip-card product-vip-card">
+
+           <div class="card-media-wrapper">
+                <img src="${p.image}" class="card-thumb">
+            </div>
+
+            <div class="card-core-payload">
+
+                <div class="product-meta-title">
+  
+                    ${p.title}
+                </div>
+
+               <div style="margin-top:10px; margin-bottom:10px; color:#00F2FE; font-weight:700;">
+    Total Orders: ${p.orderCount} 
+</div>
+
+                <div class="referral-asset-box">
+
+                    <div class="referral-input-container">
+
+                        <input class="referral-url-string" readonly value="${p.liveUrl}">
+
+                        <button class="copy-trigger-btn"
+                            onclick="navigator.clipboard.writeText('${p.liveUrl}')">
+                            <i class="ri-file-copy-line"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    `).join('');
+}
+
+window.addEventListener("DOMContentLoaded", start);
+
+</script>
+
+<script>
+// Sidebar Toggle Utility Functions
+function toggleSidebarView() {
+    const sidebar = document.getElementById('sidebar-node');
+    const overlay = document.getElementById('sidebar-overlay-node');
+    if (sidebar && overlay) {
+        sidebar.classList.toggle('visible');
+        overlay.classList.toggle('visible');
+    }
+}
+
+// System Logout Utility Functions
+function logoutSystem() {
+    localStorage.removeItem('seller_id');
+    window.location.href = 'auth.html';
+}
+
+// Active Route Link Highlighter
+const targetRouteFile = window.location.pathname.split("/").pop();
+
+document.querySelectorAll('.nav-link').forEach(linkNode => {
+    if(linkNode.getAttribute('href') === targetRouteFile){
+        linkNode.classList.add('active');
+    } else {
+        linkNode.classList.remove('active');
+    }
+});
+</script>
+
+</body>
+</html>
